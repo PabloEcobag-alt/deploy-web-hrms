@@ -1,9 +1,9 @@
 import axios from "axios";
 import { toast } from "sonner";
+import { getSession } from "next-auth/react";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
-  withCredentials: true,
 });
 
 // Global interceptor for kill-switch functionality
@@ -12,6 +12,15 @@ let authContext: any = null;
 export const setAuthContext = (context: any) => {
   authContext = context;
 };
+
+api.interceptors.request.use(async (config) => {
+  const session = await getSession();
+  const token = (session as any)?.accessToken || (session as any)?.user?.accessToken;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 api.interceptors.response.use(
   (response) => response,

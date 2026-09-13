@@ -1,7 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from "react";
-import api from "../lib/api";
+import React, { createContext, useContext, useMemo } from "react";
+import { useSession, signOut } from "next-auth/react";
 
 type User = {
   id: string;
@@ -28,77 +28,45 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: session, status } = useSession();
 
-  const validate = useCallback(async (): Promise<User | null> => {
-    try {
-      const res = await api.get("/api/erp-auth/validate");
-      
-      const rawUser = res.data.user || res.data;
-      if (!rawUser) return null;
-      
-      const moduleAccess = rawUser?.apps?.flatMap((a: any) => 
-        a.modules?.map((m: any) => m.moduleName) || []
-      ) || [];
-      
-      const appNames = rawUser?.apps?.map((a: any) => a.appName) || [];
-      const apps = [...new Set([...appNames, ...moduleAccess])];
-      
-      const mappedUser = {
-        ...rawUser,
-        role: rawUser?.roles?.[0] || "Employee",
-        apps,
-        appNames,
-        appObjects: rawUser?.apps || [],
-        moduleAccess,
-        permissions: moduleAccess
-      };
-      
-      return mappedUser;
-    } catch { return null; }
-  }, []);
+  // Map the NextAuth session user to the legacy User format expected by downstream components
+  const user = useMemo(() => {
+    if (!session?.user) return null;
+    
+    return {
+      id: session.user.id || "",
+      username: session.user.username || "",
+      firstName: session.user.firstName || "",
+      lastName: session.user.lastName || "",
+      email: session.user.email || "",
+      mustChangePassword: false, // Fallback
+      role: (session as any).role || "Employee",
+      apps: [], // Legacy fallback
+      appNames: [], // Legacy fallback
+      appObjects: [], // Legacy fallback
+      moduleAccess: [], // Legacy fallback
+      permissions: [] // Legacy fallback
+    } as User;
+  }, [session]);
 
-  const refresh = useCallback(async (): Promise<boolean> => {
-    try {
-      await api.post("/api/erp-auth/refresh");
-      return true;
-    } catch { return false; }
-  }, []);
+  const isLoading = status === "loading";
 
-  useEffect(() => {
-    const init = async () => {
-      let u = await validate();
-      if (u) { setUser(u); setIsLoading(false); return; }
+  const logout = async () => {
+    await signOut({ callbackUrl: "/signin" });
+  };
 
-      const refreshed = await refresh();
-      if (refreshed) u = await validate();
-
-      setUser(u);
-      setIsLoading(false);
-    };
-
-    init();
-  }, [validate, refresh]);
-
-  const logout = useCallback(async (): Promise<void> => {
-    try {
-      await api.post("/api/erp-auth/logout");
-    } finally {
-      setUser(null);
-    }
-  }, []);
-
-  const updateUser = useCallback((updates: Partial<User>) => {
-    setUser(prev => prev ? { ...prev, ...updates } : null);
-  }, []);
+  const updateUser = () => {
+    // No-op: User state is now strictly managed by NextAuth
+    console.warn("updateUser is deprecated. User state is managed by NextAuth.");
+  };
 
   const contextValue = useMemo(() => ({
     user,
     isLoading,
     logout,
     updateUser
-  }), [user, isLoading, logout, updateUser]);
+  }), [user, isLoading]);
 
   return (
     <AuthContext.Provider value={contextValue}>

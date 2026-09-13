@@ -79,6 +79,7 @@ export function useRecruitment() {
         }
       } catch (err) {
         console.error("Failed to fetch applicants:", err);
+        console.warn("API Error intercepted. Falling back to mock data. Error: ", err);
         setApplicants(MOCK_APPLICANTS);
       }
     };

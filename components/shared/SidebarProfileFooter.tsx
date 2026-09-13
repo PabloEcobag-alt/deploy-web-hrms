@@ -18,7 +18,7 @@ import { useAuth } from "@/context/AuthContext";
 export function SidebarProfileFooter() {
   const { user, logout } = useAuth();
 
-  const name = user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username : "Admin User";
+  const name = user ? (`${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username || "Admin User") : "Admin User";
   const email = user?.email ?? "admin@sentracx.com";
   const username = user?.username ?? "admin";
   const role = user?.role ?? "Administrator";

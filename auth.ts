@@ -149,12 +149,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // Standard OIDC identity claims — persist onto the token so the
         // session callback can expose them via session.user.
         const p = profile as Record<string, unknown>;
+        
+        const givenName = p.given_name as string | undefined;
+        const familyName = p.family_name as string | undefined;
+        
         const name =
           (p.name as string) ??
           (p.preferred_username as string) ??
-          (p.given_name as string) ??
+          givenName ??
           undefined;
+          
         if (name) token.name = name;
+        
+        if (givenName) {
+          token.firstName = givenName;
+        } else if (name) {
+          token.firstName = name.split(" ")[0];
+        }
+        
+        if (familyName) {
+          token.lastName = familyName;
+        } else if (name && name.includes(" ")) {
+          token.lastName = name.split(" ").slice(1).join(" ");
+        }
+        
         if (p.email) token.email = p.email as string;
 
         // Employee/login code (e.g. "2026-AS-001"). Different OIDC providers
@@ -229,6 +247,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // Expose identity claims on session.user so the UI can render them.
       if (session.user) {
         if (token.name) session.user.name = token.name as string;
+        if (token.firstName) session.user.firstName = token.firstName as string;
+        if (token.lastName) session.user.lastName = token.lastName as string;
         if (token.email) session.user.email = token.email as string;
         if (token.username) {
           session.user.username = token.username as string;
