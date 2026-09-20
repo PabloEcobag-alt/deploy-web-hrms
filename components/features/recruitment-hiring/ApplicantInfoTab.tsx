@@ -98,7 +98,19 @@ export function ApplicantInfoTab({
                   </label>
                   <AppSelect
                     value={form.stage}
-                    onValueChange={v => set("stage", v as HiringStage)}
+                    onValueChange={(v) => {
+                      set("stage", v as HiringStage);
+                      if (v === "Probationary" && form.startDate) {
+                        const start = new Date(form.startDate);
+                        if (!isNaN(start.getTime())) {
+                          const end = new Date(start);
+                          end.setMonth(end.getMonth() + 6);
+                          set("probationaryEndDate", end.toISOString().split("T")[0]);
+                        }
+                      } else if (v === "Hired") {
+                        set("probationaryEndDate", "");
+                      }
+                    }}
                     options={HIRING_STAGES.map(s => ({ value: s, label: s }))}
                     className="w-full"
                   />
@@ -146,6 +158,49 @@ export function ApplicantInfoTab({
                   </div>
                 </div>
               </div>
+              
+              {(form.stage === "Hired" || form.stage === "Probationary") && (
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, padding: "12px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "8px" }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: 14, fontWeight: 500, color: "#166534", marginBottom: 6 }}>
+                      Start Date *
+                    </label>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <input 
+                        type="date" 
+                        value={form.startDate || ""} 
+                        onChange={e => {
+                          set("startDate", e.target.value);
+                          if (form.stage === "Probationary" && e.target.value) {
+                            const start = new Date(e.target.value);
+                            if (!isNaN(start.getTime())) {
+                              const end = new Date(start);
+                              end.setMonth(end.getMonth() + 6);
+                              set("probationaryEndDate", end.toISOString().split("T")[0]);
+                            }
+                          }
+                        }} 
+                        style={{ ...inputStyle, borderColor: errors.startDate ? "#dc2626" : "#86efac", background: "#ffffff" }} 
+                      />
+                    </div>
+                    {errors.startDate && <p style={{ color: "#dc2626", fontSize: 11, margin: "3px 0 0" }}>{errors.startDate}</p>}
+                  </div>
+                  
+                  {form.stage === "Probationary" && (
+                    <div>
+                      <label style={{ display: "block", fontSize: 14, fontWeight: 500, color: "#166534", marginBottom: 6 }}>
+                        Probationary End Date (+6 months)
+                      </label>
+                      <input 
+                        type="date" 
+                        value={form.probationaryEndDate || ""} 
+                        readOnly
+                        style={{ ...inputStyle, borderColor: "#86efac", background: "#f1f5f9", color: "#64748b", cursor: "not-allowed" }} 
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
   );
 }

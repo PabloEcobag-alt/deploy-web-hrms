@@ -1,6 +1,5 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { toast } from "sonner";
-import { getSession } from "next-auth/react";
 
 const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5001",
@@ -9,12 +8,7 @@ const apiClient = axios.create({
   },
 });
 
-apiClient.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
-  const session = await getSession();
-  const token = (session as any)?.accessToken || (session as any)?.user?.accessToken;
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config;
 });
 

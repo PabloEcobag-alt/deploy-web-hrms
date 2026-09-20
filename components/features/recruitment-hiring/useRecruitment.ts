@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { toast } from "sonner";
-import { getAllApplicants, updateApplicant, createApplicant } from "@/lib/services";
+import { getAllApplicants, updateApplicant, createApplicant, apiClient } from "@/lib/services";
 import api from "@/lib/api";
 import type { Applicant, ApplicantSource, HiringStage, ApplicantFormData } from "./types";
 import { getFullName, getDaysUntil } from "./utils";
@@ -54,6 +54,8 @@ export function useRecruitment() {
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
+
+
 
   // Fetch applicants from API + poll every 10s
   useEffect(() => {
@@ -205,7 +207,13 @@ export function useRecruitment() {
         toast.success("Applicant updated successfully");
         if (isTransformationStage) {
           try {
-            const response = await api.post(`/api/applicants/${applicantId}/transform`);
+            const payload = {
+              applicantId: applicantId,
+              hiringStage: form.stage,
+              startDate: form.startDate ? new Date(form.startDate).toISOString() : new Date().toISOString(),
+              probationaryEndDate: form.probationaryEndDate ? new Date(form.probationaryEndDate).toISOString() : undefined,
+            };
+            const response = await api.post(`/api/applicants/hire`, payload);
             toast.success(`Applicant transformed to employee successfully! Employee ID: ${response.data.employeeId}`);
           } catch (error: any) {
             console.error("Failed to transform applicant to employee:", error);
@@ -236,18 +244,7 @@ export function useRecruitment() {
     const prevStage = applicants.find(a => a.id === id)?.stage ?? "Initial Interview";
 
     if (stage === "Hired" || stage === "Probationary") {
-      try {
-        const applicantId = parseInt(id);
-        await updateApplicant(applicantId, undefined, stage);
-        const response = await api.post(`/api/applicants/${applicantId}/transform`);
-        setApplicants(prev => prev.map(a => a.id !== id ? a : { ...a, stage }));
-        toast.success(`Applicant transformed to employee successfully! Employee ID: ${response.data.employeeId}`);
-      } catch (error: any) {
-        console.error("Failed to transform applicant to employee:", error);
-        handleTransformError(error);
-        setApplicants(prev => prev.map(a => a.id !== id ? a : { ...a, stage: prevStage }));
-        return;
-      }
+      toast.error("Please use the Edit Applicant modal to set a Start Date before hiring.");
       return;
     }
 

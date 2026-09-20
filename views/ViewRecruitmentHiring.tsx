@@ -20,7 +20,7 @@ export default function ViewRecruitmentHiring() {
   const isDark = useDarkMode();
   const c = useColors(isDark);
   const { user } = useAuth();
-  const isAdmin = user?.role === "Admin";
+  const isAdmin = user?.roles?.includes("Admin");
 
   const vm = useRecruitment();
 

@@ -145,7 +145,7 @@ export default function ViewAttendanceBiometrics({ section = "live" }: { section
   const isDark = useDarkMode();
   const c = useColors(isDark);
   const { user } = useAuth();
-  const role = user?.role;
+  const role = user?.roles?.[0];
 
   const [auditMode, setAuditMode] = useState<"week" | "month">("week");
   const [auditWeek, setAuditWeek] = useState("2026-W18");

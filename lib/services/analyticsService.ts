@@ -9,6 +9,20 @@ import {
 
 const BASE_PATH = "/api/hrms/analytics";
 
+export interface HrmsDashboardSummary {
+  totalEmployees: number;
+  regularEmployees: number;
+  totalApplicants: number;
+  activeApplicants: number;
+  totalAttendanceRecords: number;
+  onTimeCount: number;
+  totalPayroll: number;
+}
+
+export const getHrmsDashboardSummary = async (): Promise<HrmsDashboardSummary> => {
+  return (await apiClient.get<HrmsDashboardSummary>(`${BASE_PATH}/hrms-summary`)).data;
+};
+
 export const getDashboardSummary = async (startDate?: string, endDate?: string): Promise<DashboardSummary> => {
   try {
     const { data } = await apiClient.get<DashboardSummary>(`${BASE_PATH}/dashboard`, {
@@ -70,7 +84,7 @@ export const getPositionFit = async (startDate?: string, endDate?: string): Prom
 
 export const getApplicationTrends = async (startDate?: string, endDate?: string): Promise<ApplicationTrend[]> => {
   try {
-    const { data } = await apiClient.get<ApplicationTrend[]>(`${BASE_PATH}/trends`, {
+    const { data } = await apiClient.get<ApplicationTrend[]>(`${BASE_PATH}/application-trends`, {
       params: startDate || endDate ? { startDate, endDate } : undefined,
     });
     return data;
@@ -82,7 +96,7 @@ export const getApplicationTrends = async (startDate?: string, endDate?: string)
 
 export const exportAllCandidates = async (startDate?: string, endDate?: string): Promise<TopCandidate[]> => {
   try {
-    const { data } = await apiClient.get<TopCandidate[]>(`${BASE_PATH}/export`, {
+    const { data } = await apiClient.get<TopCandidate[]>(`${BASE_PATH}/export-candidates`, {
       params: startDate || endDate ? { startDate, endDate } : undefined,
     });
     return data;

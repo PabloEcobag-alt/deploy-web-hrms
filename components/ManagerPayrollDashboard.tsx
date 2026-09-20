@@ -11,7 +11,7 @@ import { FinalizeModal, DisburseModal } from "./features/manager-payroll/Payroll
 
 export default function ManagerPayrollDashboard({ c, isDark, readOnly = false }: ManagerPayrollDashboardProps) {
   const { user } = useAuth();
-  const isMaker = user?.role === "SystemAdmin";
+  const isMaker = user?.roles?.includes("SystemAdmin");
   const vm = usePayroll(readOnly);
 
   return (

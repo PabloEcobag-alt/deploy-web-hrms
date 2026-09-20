@@ -58,4 +58,6 @@ export interface ApplicantFormData {
   employmentDocs: EmploymentDocs;
   healthDocs: HealthDocs;
   resumeFileName: string;
+  startDate?: string;
+  probationaryEndDate?: string;
 }

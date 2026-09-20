@@ -16,7 +16,7 @@ export default function ViewUserManagement() {
   const isDark = useDarkMode();
   const c = useColors(isDark);
   const { user } = useAuth();
-  const isAdmin = user?.role === "Admin";
+  const isAdmin = user?.roles?.includes("Super Admin") || user?.isSuperUser === true;
 
   const vm = useUserManagement(isAdmin);
 

@@ -83,6 +83,12 @@ export function ApplicantModal({
     if (!form.firstName.trim()) e.firstName = "Required";
     if (!form.lastName.trim()) e.lastName = "Required";
     if (!form.email.trim()) e.email = "Required";
+    
+    if ((form.stage === "Hired" || form.stage === "Probationary") && !form.startDate?.trim()) {
+      e.startDate = "Start Date is required for hired applicants";
+      setTab("info"); // Switch to info tab if error is there
+    }
+    
     setErrors(e);
     return Object.keys(e).length === 0;
   }

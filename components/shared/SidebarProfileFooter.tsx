@@ -21,7 +21,7 @@ export function SidebarProfileFooter() {
   const name = user ? (`${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username || "Admin User") : "Admin User";
   const email = user?.email ?? "admin@sentracx.com";
   const username = user?.username ?? "admin";
-  const role = user?.role ?? "Administrator";
+  const role = user?.roles?.[0] ?? "Administrator";
   const initials = name
     .split(" ")
     .map((n) => n[0])
@@ -110,13 +110,13 @@ export function SidebarProfileFooter() {
           <DropdownMenuSeparator className="bg-border" />
 
           <DropdownMenuItem
-            onClick={async () => {
-              if (logout) await logout();
-            }}
+            asChild
             className="cursor-pointer text-xs font-medium gap-sm p-sm text-destructive hover:bg-destructive/10 hover:text-destructive"
           >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>Sign out</span>
+            <a href="/api/logout">
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Sign out</span>
+            </a>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

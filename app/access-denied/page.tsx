@@ -1,6 +1,5 @@
 "use client";
 
-import { signOut } from "next-auth/react";
 import { ShieldAlert } from "lucide-react";
 
 export default function AccessDenied() {
@@ -13,15 +12,12 @@ export default function AccessDenied() {
       <p className="text-muted-foreground max-w-md mb-8">
         Your account does not have permission to access the Human Resource Management System (HRMS) or the requested module.
       </p>
-      <button
-        onClick={async () => {
-          await signOut({ redirect: false });
-          window.location.href = "https://localhost:5001/connect/logout?post_logout_redirect_uri=https://localhost:3001/";
-        }}
+      <a
+        href="/api/logout"
         className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer"
       >
         Sign Out / Switch Account
-      </button>
+      </a>
     </div>
   );
 }

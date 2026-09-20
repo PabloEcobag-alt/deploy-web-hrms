@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useMemo } from "react";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 type User = {
   id: string;
@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const isLoading = status === "loading";
 
   const logout = async () => {
-    await signOut({ callbackUrl: "/signin" });
+    window.location.href = "/api/logout";
   };
 
   const updateUser = () => {

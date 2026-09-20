@@ -146,7 +146,13 @@ export function AppSelect({
                     role="option"
                     aria-selected={isSelected}
                     disabled={o.disabled}
-                    onClick={() => { if (!o.disabled) { onValueChange(o.value); setOpen(false); } }}
+                    onPointerDown={(e) => { 
+                      e.preventDefault(); // Prevent focus loss
+                      if (!o.disabled) { 
+                        onValueChange(o.value); 
+                        setOpen(false); 
+                      } 
+                    }}
                     className={cn(
                       "flex w-full items-center justify-between gap-2 rounded-md px-2.5 py-1.5 text-left text-xs transition-colors",
                       o.disabled

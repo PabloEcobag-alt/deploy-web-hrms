@@ -18,7 +18,7 @@ interface AuthUserLike {
  * Encapsulates all state, effects, and handlers for ViewDigital201File.
  */
 export function useDigital201(user: AuthUserLike | null | undefined) {
-  const role = user?.role;
+  const role = user?.roles?.[0];
 
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);

@@ -23,6 +23,8 @@ function formatCurrency(amount: number) {
   return new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP", maximumFractionDigits: 0 }).format(amount);
 }
 
+import { getHrmsDashboardSummary, HrmsDashboardSummary } from "@/lib/services/analyticsService";
+
 // Pastel pill styles for the recent-applicants stage column.
 const STAGE_STYLES: Record<string, string> = {
   Hired: "bg-emerald-50 text-emerald-700 border-emerald-200/60",
@@ -35,13 +37,22 @@ const STAGE_STYLES: Record<string, string> = {
 
 export default function ViewDashboard() {
   // ── Stat card metrics ────────────────────────────────────────────────
-  const totalEmployees = MOCK_EMPLOYEES.length;
-  const regularEmployees = MOCK_EMPLOYEES.filter((e) => e.status === "Regular").length;
-  const totalApplicants = MOCK_APPLICANTS.length;
-  const activeApplicants = MOCK_APPLICANTS.filter((a) => a.stage !== "Hired" && a.stage !== "Failed").length;
-  const onTimeCount = MOCK_ATTENDANCE.filter((r) => r.late.frequency === 0 && r.absences === 0).length;
-  const attendanceRate = MOCK_ATTENDANCE.length > 0 ? Math.round((onTimeCount / MOCK_ATTENDANCE.length) * 100) : 0;
-  const totalPayroll = MOCK_PAYROLL.reduce((sum, r) => sum + r.realPay, 0);
+  const [summary, setSummary] = React.useState<HrmsDashboardSummary | null>(null);
+
+  React.useEffect(() => {
+    getHrmsDashboardSummary()
+      .then((data) => setSummary(data))
+      .catch((err) => console.error("Failed to load HRMS summary", err));
+  }, []);
+
+  const totalEmployees = summary ? summary.totalEmployees : MOCK_EMPLOYEES.length;
+  const regularEmployees = summary ? summary.regularEmployees : MOCK_EMPLOYEES.filter((e) => e.status === "Regular").length;
+  const totalApplicants = summary ? summary.totalApplicants : MOCK_APPLICANTS.length;
+  const activeApplicants = summary ? summary.activeApplicants : MOCK_APPLICANTS.filter((a) => a.stage !== "Hired" && a.stage !== "Failed").length;
+  const onTimeCount = summary ? summary.onTimeCount : MOCK_ATTENDANCE.filter((r) => r.late.frequency === 0 && r.absences === 0).length;
+  const totalAttendanceRecords = summary ? summary.totalAttendanceRecords : MOCK_ATTENDANCE.length;
+  const attendanceRate = totalAttendanceRecords > 0 ? Math.round((onTimeCount / totalAttendanceRecords) * 100) : 0;
+  const totalPayroll = summary ? summary.totalPayroll : MOCK_PAYROLL.reduce((sum, r) => sum + r.realPay, 0);
 
   // ── Chart data ───────────────────────────────────────────────────────
   const applicantsByStage: ChartDatum[] = Object.entries(

@@ -26,6 +26,8 @@ export function emptyForm(): ApplicantFormData {
     employmentDocs: Object.fromEntries(EMPLOYMENT_DOCUMENTS.map((d) => [d.key, false])),
     healthDocs: Object.fromEntries(HEALTH_CHECKLIST.map((h) => [h.key, false])),
     resumeFileName: "",
+    startDate: "",
+    probationaryEndDate: "",
   };
 }
 
@@ -52,5 +54,7 @@ export function applicantToForm(a: Applicant): ApplicantFormData {
         Object.fromEntries(HEALTH_CHECKLIST.map((h) => [h.key, false]))),
     },
     resumeFileName: a.resumeFileName ?? "",
+    startDate: a.startDate ?? "",
+    probationaryEndDate: a.probationaryEndDate ?? "",
   };
 }

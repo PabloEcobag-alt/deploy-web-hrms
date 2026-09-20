@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
+import { apiClient } from "@/lib/services";
 import { SummaryCards } from "@/components/analytics/SummaryCards";
 import { ScoreDistributionChart } from "@/components/analytics/ScoreDistributionChart";
 import { TopCandidatesTable } from "@/components/analytics/TopCandidatesTable";
@@ -40,6 +41,11 @@ export default function RecruitmentAnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [startDate, setStartDate] = useState<string | undefined>();
   const [endDate, setEndDate] = useState<string | undefined>();
+
+  const handleDateChange = (newStartDate: string | undefined, newEndDate: string | undefined) => {
+    setStartDate(newStartDate);
+    setEndDate(newEndDate);
+  };
 
   const fetchAll = useCallback(async () => {
     try {
@@ -91,11 +97,6 @@ export default function RecruitmentAnalyticsPage() {
       clearInterval(interval);
     };
   }, [fetchAll]);
-
-  const handleDateChange = (newStartDate: string | undefined, newEndDate: string | undefined) => {
-    setStartDate(newStartDate);
-    setEndDate(newEndDate);
-  };
 
   return (
     <div className="space-y-6 p-4 md:p-6 max-w-7xl mx-auto">

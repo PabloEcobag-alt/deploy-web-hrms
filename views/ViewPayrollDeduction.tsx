@@ -33,7 +33,7 @@ export default function ViewPayrollDeduction({ section = "computation" }: { sect
   const isDark = useDarkMode();
   const c = useColors(isDark);
   const { user } = useAuth();
-  const role = user?.role;
+  const role = user?.roles?.[0];
 
   const meta = SECTION_META[section];
 
