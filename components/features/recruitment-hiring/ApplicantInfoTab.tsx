@@ -5,6 +5,8 @@ import type { ApplicantFormData, ApplicantSource, HiringStage } from "./types";
 import { POSITIONS, APPLICANT_SOURCES, HIRING_STAGES } from "./constants";
 import { AppSelect } from "@/components/ui/app-select";
 import { type Colors } from "./utils";
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 
 export function ApplicantInfoTab({
   form, set, errors, c, inputStyle, resumeRef, appliedRef, interviewRef,
@@ -130,8 +132,13 @@ export function ApplicantInfoTab({
                 <label style={{ display: "block", fontSize: 14, fontWeight: 500, color: "#000000", marginBottom: 6 }}>
                   Phone Number
                 </label>
-                <input value={form.phone} onChange={e => set("phone", e.target.value)}
-                  placeholder="e.g., +63 912-000-0000" style={inputStyle} />
+                <PhoneInput
+                  international
+                  defaultCountry="PH"
+                  value={form.phone}
+                  onChange={(v) => set("phone", v as string)}
+                  style={inputStyle}
+                />
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>

@@ -25,16 +25,25 @@ export function mapApplicants(data: any[]): Applicant[] {
       status: a.status || "Training",
       stage: a.hiring_Stage || "Initial Interview",
       source: a.source || "Walk-In",
-      govIds: initGovIds(),
-      requirements: initRequirements(),
+      govIds: { 
+        sss: !!a.checklist?.has_SSS, 
+        pagibig: !!a.checklist?.has_PAGIBIG, 
+        philhealth: !!a.checklist?.has_PhilHealth, 
+        tin: !!a.checklist?.has_TIN 
+      },
+      requirements: { 
+        nbi: !!a.checklist?.has_NBI, 
+        medical: !!a.checklist?.has_Medical, 
+        xray: !!a.checklist?.has_Xray 
+      },
       employmentDocs: initEmploymentDocs(),
       healthDocs: initHealthDocs(),
       email: a.email || "",
-      phone: a.phone || "",
+      phone: a.mobile || a.phone || "",
       avatarIndex: idx % AVATAR_STYLES.length,
       appliedDate: a.application_Date || new Date().toISOString().split("T")[0],
       interviewDate: a.interview_Date || "",
-      expectedStart: "",
+      expectedStart: a.expected_Start_Date || a.expectedStartDate || "",
       aiMatchScore: a.ai_Match_Score ?? a.aiMatchScore ?? undefined,
     }))
     .sort((x, y) => Number(y.id) - Number(x.id));

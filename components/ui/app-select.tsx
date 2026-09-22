@@ -130,7 +130,7 @@ export function AppSelect({
             role="listbox"
             style={{ position: "fixed", left: rect.left, top: rect.top, width: rect.width }}
             className={cn(
-              "z-[99999] min-w-[8rem] rounded-lg border border-border bg-white shadow-md p-1 max-h-[220px] overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-150",
+              "z-[99999] pointer-events-auto min-w-[8rem] rounded-lg border border-border bg-white shadow-md p-1 max-h-[220px] overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-150",
               menuClassName
             )}
           >

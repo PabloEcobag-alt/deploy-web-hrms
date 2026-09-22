@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { toast } from "sonner";
 import type {
   Applicant,
   ApplicantFormData,
@@ -244,7 +245,13 @@ export function ApplicantModal({
             Cancel
           </button>
           <button
-            onClick={() => { if (validate()) onSave(form); }}
+            onClick={() => { 
+              if (validate()) {
+                onSave(form); 
+              } else {
+                toast.error("Please fill in all required fields, including the Start Date for new hires.");
+              }
+            }}
             className="inline-flex h-10 items-center justify-center rounded-md bg-black px-5 text-base font-normal text-white shadow-xs transition-colors hover:bg-black/90"
           >
             {mode === "add" ? "Add Applicant" : "Save Changes"}

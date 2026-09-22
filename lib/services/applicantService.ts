@@ -26,9 +26,9 @@ export const createApplicant = async (dto: any): Promise<any> => {
   }
 };
 
-export const hireApplicant = async (applicantId: number, roleId: number): Promise<any> => {
+export const hireApplicant = async (payload: any): Promise<any> => {
   try {
-    const response = await apiClient.post("/api/hrms/applicants/hire", { applicantId, roleId });
+    const response = await apiClient.post("/api/hrms/applicants/hire", payload);
     return response.data;
   } catch (error: any) {
     if (error.response?.status === 404) {
@@ -39,13 +39,10 @@ export const hireApplicant = async (applicantId: number, roleId: number): Promis
   }
 };
 
-export const updateApplicant = async (id: number, interviewDate?: string, hiringStage?: string): Promise<boolean> => {
+export const updateApplicant = async (id: number, data: any): Promise<boolean> => {
   try {
-    const response = await apiClient.patch(`/api/hrms/applicants/${id}`, {
-      Interview_Date: interviewDate,
-      Hiring_Stage: hiringStage,
-    });
-    return response.status === 204;
+    const response = await apiClient.patch(`/api/hrms/applicants/${id}`, data);
+    return response.status === 200 || response.status === 204;
   } catch (error: any) {
     console.error("Update applicant error:", error.response?.data || error.message);
     if (error.response?.status === 404) {

@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { toast } from "sonner";
-import { getAllApplicants, updateApplicant, createApplicant, apiClient } from "@/lib/services";
-import api from "@/lib/api";
+import { getAllApplicants, updateApplicant, createApplicant, apiClient, hireApplicant } from "@/lib/services";
 import type { Applicant, ApplicantSource, HiringStage, ApplicantFormData } from "./types";
 import { getFullName, getDaysUntil } from "./utils";
 import { MOCK_APPLICANTS } from "./mockData";
@@ -195,11 +194,23 @@ export function useRecruitment() {
         selectedApplicant.stage !== form.stage;
       try {
         const applicantId = parseInt(selectedApplicant.id);
-        await updateApplicant(applicantId, form.interviewDate, form.stage);
+        const stageToSave = isTransformationStage ? selectedApplicant.stage : (form.stage || null);
+        
+        await updateApplicant(applicantId, {
+            First_Name: form.firstName || null,
+            Middle_Name: form.middleName || null,
+            Last_Name: form.lastName || null,
+            Interview_Date: form.interviewDate || null,
+            Hiring_Stage: stageToSave,
+            Position: form.position || null,
+            Email: form.email || null,
+            Mobile: form.phone || null,
+            Requirements: { ...form.requirements, ...form.govIds }
+        });
         setApplicants(prev => prev.map(a => a.id === selectedApplicant.id ? {
           ...a,
           firstName: form.firstName, middleName: form.middleName, lastName: form.lastName,
-          position: form.position, source: form.source, stage: form.stage,
+          position: form.position, source: form.source, stage: stageToSave as HiringStage,
           email: form.email, phone: form.phone,
           appliedDate: form.appliedDate, interviewDate: form.interviewDate,
           govIds: form.govIds, requirements: form.requirements, employmentDocs: form.employmentDocs, resumeFileName: form.resumeFileName,
@@ -213,8 +224,9 @@ export function useRecruitment() {
               startDate: form.startDate ? new Date(form.startDate).toISOString() : new Date().toISOString(),
               probationaryEndDate: form.probationaryEndDate ? new Date(form.probationaryEndDate).toISOString() : undefined,
             };
-            const response = await api.post(`/api/applicants/hire`, payload);
-            toast.success(`Applicant transformed to employee successfully! Employee ID: ${response.data.employeeId}`);
+            const response = await hireApplicant(payload);
+            toast.success(`Applicant transformed to employee successfully! Employee ID: ${response.employeeId || response.id || 'Generated'}`);
+            setApplicants(prev => prev.map(a => a.id === selectedApplicant.id ? { ...a, stage: form.stage as HiringStage } : a));
           } catch (error: any) {
             console.error("Failed to transform applicant to employee:", error);
             handleTransformError(error);
@@ -231,10 +243,11 @@ export function useRecruitment() {
   }
 
   function handleTransformError(error: any) {
+    const errorMsg = error.response?.data?.message || error.response?.data?.details || "Invalid request data. Please try again.";
     if (error.response?.status === 404) {
       toast.error("Transformation endpoint not available. Please contact support.");
     } else if (error.response?.status === 400) {
-      toast.error("Invalid request data. Please try again.");
+      toast.error(errorMsg);
     } else {
       toast.error("Failed to transform applicant to employee. Please try again.");
     }
@@ -250,7 +263,7 @@ export function useRecruitment() {
 
     try {
       const applicantId = parseInt(id);
-      await updateApplicant(applicantId, undefined, stage);
+      await updateApplicant(applicantId, { Hiring_Stage: stage });
       setApplicants(prev => prev.map(a => (a.id !== id ? a : { ...a, stage })));
     } catch (error) {
       console.error("Failed to update hiring stage:", error);
@@ -266,7 +279,7 @@ export function useRecruitment() {
     });
     try {
       const id = parseInt(applicantId);
-      await updateApplicant(id, date);
+      await updateApplicant(id, { Interview_Date: date });
       setApplicants(prev => prev.map(a => a.id === applicantId ? { ...a, interviewDate: date } : a));
     } catch (error) {
       console.error("Failed to update interview date:", error);
