@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const userManagementClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5001",
+  baseURL: "https://dicing-saxophone-food.ngrok-free.dev",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

@@ -3,7 +3,7 @@ import { toast } from "sonner";
 // import { getSession } from "next-auth/react";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: "https://dicing-saxophone-food.ngrok-free.dev",
 });
 
 // Global interceptor for kill-switch functionality
