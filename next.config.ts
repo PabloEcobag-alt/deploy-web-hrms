@@ -5,7 +5,8 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   async rewrites() {
-    const backendUrl = process.env.BACKEND_GATEWAY_URL || "http://localhost:5002";
+    // Hardcode the presentation URL directly to bypass Vercel environment variable parsing
+    const backendUrl = "https://dicing-saxophone-food.ngrok-free.dev";
     return [
       {
         source: '/api/hrms/:path*',
