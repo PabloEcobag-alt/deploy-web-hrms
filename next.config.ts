@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
         source: '/api/erp-auth/:path*',
         destination: `${backendUrl}/api/erp-auth/:path*`,
       },
+      {
+        source: '/api/admin/digital201/:path*',
+        destination: `${backendUrl}/api/admin/digital201/:path*`,
+      },
     ];
   },
 };

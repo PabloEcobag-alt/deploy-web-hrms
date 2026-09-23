@@ -1,3 +1,4 @@
+/*
 "use client";
 
 import { useEffect } from "react";
@@ -16,3 +17,5 @@ export function LogoutEventListener({
   );
   return null;
 }
+*/
+export const LogoutEventListener = () => null;

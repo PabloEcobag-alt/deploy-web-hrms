@@ -1,3 +1,4 @@
+/*
 type Options = { accessToken: string; issuer: string };
 
 export function connectLogoutEvents({ accessToken, issuer }: Options) {
@@ -31,3 +32,5 @@ export function connectLogoutEvents({ accessToken, issuer }: Options) {
     socket?.close();
   };
 }
+*/
+export const connectLogoutEvents = () => {};

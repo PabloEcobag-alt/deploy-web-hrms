@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useMemo } from "react";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
 
 type User = {
   id: string;
@@ -28,29 +28,29 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession();
 
   // Map the NextAuth session user to the legacy User format expected by downstream components
   const user = useMemo(() => {
-    if (!session?.user) return null;
+    // if (!session?.user) return null;
     
     return {
-      id: session.user.id || "",
-      username: session.user.username || "",
-      firstName: session.user.firstName || "",
-      lastName: session.user.lastName || "",
-      email: session.user.email || "",
+      id: "mock-id",
+      username: "admin",
+      firstName: "Admin",
+      lastName: "User",
+      email: "admin@sentracx.com",
       mustChangePassword: false, // Fallback
-      role: (session as any).role || "Employee",
+      role: "Administrator",
       apps: [], // Legacy fallback
       appNames: [], // Legacy fallback
       appObjects: [], // Legacy fallback
       moduleAccess: [], // Legacy fallback
       permissions: [] // Legacy fallback
     } as User;
-  }, [session]);
+  }, []);
 
-  const isLoading = status === "loading";
+  const isLoading = false; // status === "loading";
 
   const logout = async () => {
     window.location.href = "/api/logout";

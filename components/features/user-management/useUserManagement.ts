@@ -169,6 +169,16 @@ export function useUserManagement(isAdmin: boolean) {
   };
 
   const handleEdit = async (user: UserReadDto) => {
+    if (user.Status === "Pending") {
+      const emp = unregisteredEmployees.find(e => e.employeeId === Math.abs(user.Id));
+      if (emp) {
+        setSelectedEmployee(emp);
+        setShowModal(true);
+      }
+      return;
+    }
+
+
     setEditingUser(user);
     setEditFirstName(user.FirstName);
     setEditLastName(user.LastName);
@@ -263,11 +273,28 @@ export function useUserManagement(isAdmin: boolean) {
     );
   };
 
-  const activeUsers = users.filter((u) => u.Status === "Active").length;
-  const inactiveUsers = users.filter((u) => u.Status === "Inactive").length;
+  const combinedUsers: UserReadDto[] = [
+    ...users,
+    ...unregisteredEmployees.map((emp) => ({
+      Id: -emp.employeeId, // Use negative ID to avoid collision
+      FirstName: emp.firstName,
+      LastName: emp.lastName,
+      Username: "Unregistered",
+      Email: emp.emailAddress || "",
+      Role: "Pending Registration",
+      Status: "Pending",
+      Apps: [],
+      Type: "Internal",
+      SecurityStamp: "",
+      IsActive: false,
+    } as UserReadDto)),
+  ];
+
+  const activeUsers = combinedUsers.filter((u) => u.Status === "Active").length;
+  const inactiveUsers = combinedUsers.filter((u) => u.Status === "Inactive").length;
 
   const { tabUsers, title, subtitle, usersByRole, usersByStatus } = getTabData(
-    users,
+    combinedUsers,
     searchQuery,
     activeTab
   );

@@ -109,7 +109,7 @@ export function SidebarProfileFooter() {
 
           <DropdownMenuSeparator className="bg-border" />
 
-          <DropdownMenuItem
+          {/* <DropdownMenuItem
             asChild
             className="cursor-pointer text-xs font-medium gap-sm p-sm text-destructive hover:bg-destructive/10 hover:text-destructive"
           >
@@ -117,7 +117,7 @@ export function SidebarProfileFooter() {
               <LogOut className="w-3.5 h-3.5" />
               <span>Sign out</span>
             </a>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

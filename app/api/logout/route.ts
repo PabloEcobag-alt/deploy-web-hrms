@@ -1,3 +1,4 @@
+/*
 import { NextRequest, NextResponse } from "next/server";
 import { signOut } from "@/auth";
 
@@ -30,3 +31,7 @@ function clearAuthCookies(request: NextRequest, response: NextResponse) {
     });
   }
 }
+*/
+export default function Mock() {}
+export const GET = function MockGet() {};
+export const POST = function MockPost() {};

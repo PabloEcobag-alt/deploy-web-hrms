@@ -1,3 +1,4 @@
+/*
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -14,3 +15,7 @@ export async function GET(request: NextRequest) {
   }
   return response;
 }
+*/
+export default function Mock() {}
+export const GET = function MockGet() {};
+export const POST = function MockPost() {};

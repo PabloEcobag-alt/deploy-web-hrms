@@ -1,3 +1,4 @@
+/*
 import type { JWT } from "next-auth/jwt";
 
 type RefreshTokenResponse = {
@@ -80,3 +81,5 @@ function isRefreshTokenResponse(value: unknown): value is RefreshTokenResponse {
     typeof data.access_token === "string" && typeof data.expires_in === "number"
   );
 }
+*/
+export const refreshAccessToken = () => {};

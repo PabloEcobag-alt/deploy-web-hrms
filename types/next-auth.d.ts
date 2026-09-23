@@ -1,3 +1,4 @@
+/*
 import type { DefaultSession } from "next-auth";
 
 declare module "next-auth" {
@@ -26,3 +27,7 @@ declare module "next-auth/jwt" {
     error?: string;
   }
 }
+*/
+export default function Mock() {}
+export const GET = function MockGet() {};
+export const POST = function MockPost() {};

@@ -1,6 +1,6 @@
 // Types for the User Management feature.
 
-export type UserStatus = "Active" | "Inactive" | "Suspended";
+export type UserStatus = "Active" | "Inactive" | "Suspended" | "Pending";
 
 export type TabKey = "all" | "role" | "status";
 
