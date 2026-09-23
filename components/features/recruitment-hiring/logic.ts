@@ -14,8 +14,12 @@ import {
  * Map raw applicant DTOs from the API into the client Applicant model,
  * newest first (applicant IDs are sequential).
  */
-export function mapApplicants(data: any[]): Applicant[] {
-  return data
+export function mapApplicants(data: any): Applicant[] {
+  if (!data) return [];
+  // Extract the array if the backend wrapped it in an object
+  const dataArray = Array.isArray(data) ? data : (data.data || data.items || []);
+
+  return dataArray
     .map((a: any, idx: number): Applicant => ({
       id: a.applicant_Id?.toString() || idx.toString(),
       firstName: a.first_Name || a.firstName || "",

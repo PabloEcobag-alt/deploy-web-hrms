@@ -194,28 +194,6 @@ export function useRecruitment() {
         selectedApplicant.stage !== form.stage;
       try {
         const applicantId = parseInt(selectedApplicant.id);
-        const stageToSave = isTransformationStage ? selectedApplicant.stage : (form.stage || null);
-        
-        await updateApplicant(applicantId, {
-            First_Name: form.firstName || null,
-            Middle_Name: form.middleName || null,
-            Last_Name: form.lastName || null,
-            Interview_Date: form.interviewDate || null,
-            Hiring_Stage: stageToSave,
-            Position: form.position || null,
-            Email: form.email || null,
-            Mobile: form.phone || null,
-            Requirements: { ...form.requirements, ...form.govIds }
-        });
-        setApplicants(prev => prev.map(a => a.id === selectedApplicant.id ? {
-          ...a,
-          firstName: form.firstName, middleName: form.middleName, lastName: form.lastName,
-          position: form.position, source: form.source, stage: stageToSave as HiringStage,
-          email: form.email, phone: form.phone,
-          appliedDate: form.appliedDate, interviewDate: form.interviewDate,
-          govIds: form.govIds, requirements: form.requirements, employmentDocs: form.employmentDocs, resumeFileName: form.resumeFileName,
-        } : a));
-        toast.success("Applicant updated successfully");
         if (isTransformationStage) {
           try {
             const payload = {
@@ -231,6 +209,27 @@ export function useRecruitment() {
             console.error("Failed to transform applicant to employee:", error);
             handleTransformError(error);
           }
+        } else {
+          await updateApplicant(applicantId, {
+              First_Name: form.firstName || null,
+              Middle_Name: form.middleName || null,
+              Last_Name: form.lastName || null,
+              Interview_Date: form.interviewDate || null,
+              Hiring_Stage: form.stage || null,
+              Position: form.position || null,
+              Email: form.email || null,
+              Mobile: form.phone || null,
+              Requirements: { ...form.requirements, ...form.govIds }
+          });
+          setApplicants(prev => prev.map(a => a.id === selectedApplicant.id ? {
+            ...a,
+            firstName: form.firstName, middleName: form.middleName, lastName: form.lastName,
+            position: form.position, source: form.source, stage: form.stage as HiringStage,
+            email: form.email, phone: form.phone,
+            appliedDate: form.appliedDate, interviewDate: form.interviewDate,
+            govIds: form.govIds, requirements: form.requirements, employmentDocs: form.employmentDocs, resumeFileName: form.resumeFileName,
+          } : a));
+          toast.success("Applicant updated successfully");
         }
       } catch (error: any) {
         console.error("Failed to update applicant:", error);

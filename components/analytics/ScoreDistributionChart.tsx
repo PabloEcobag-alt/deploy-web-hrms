@@ -54,7 +54,7 @@ export function ScoreDistributionChart({ data, isLoading }: ScoreDistributionCha
       </h3>
       <div className="h-56">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data.buckets.map((bucket, index) => ({ ...bucket, key: `${bucket.label}-${bucket.min}-${bucket.max}-${index}` }))} margin={{ top: 8, right: 8, left: -12, bottom: 0 }}>
+          <BarChart data={(data?.buckets || []).map((bucket, index) => ({ ...bucket, key: `${bucket.label}-${bucket.min}-${bucket.max}-${index}` }))} margin={{ top: 8, right: 8, left: -12, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis
               dataKey="label"
@@ -76,7 +76,7 @@ export function ScoreDistributionChart({ data, isLoading }: ScoreDistributionCha
               }}
             />
             <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-              {data.buckets.map((bucket, index) => (
+              {(data?.buckets || []).map((bucket, index) => (
                 <Cell
                   key={`${bucket.label}-${bucket.min}-${bucket.max}-${index}`}
                   fill={BAR_COLORS[index % BAR_COLORS.length]}
