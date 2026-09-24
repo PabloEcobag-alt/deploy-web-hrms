@@ -59,17 +59,17 @@ export default function RecruitmentAnalyticsPage() {
 
       setSummary(s ?? MOCK_ANALYTICS_SUMMARY);
       setDistribution(d ?? MOCK_SCORE_DISTRIBUTION);
-      setTopCandidates(t && t.length > 0 ? t : MOCK_TOP_CANDIDATES);
-      setPositionFit(p && p.length > 0 ? p : MOCK_POSITION_FIT);
-      setTrends(tr && tr.length > 0 ? tr : MOCK_APPLICATION_TRENDS);
+      setTopCandidates(t ?? []);
+      setPositionFit(p ?? []);
+      setTrends(tr ?? []);
     } catch (error) {
       console.error("Failed to load recruitment analytics:", error);
-      // Populate the screen with mock data when the API is unavailable.
+      // Keep empty states on error
       setSummary(MOCK_ANALYTICS_SUMMARY);
       setDistribution(MOCK_SCORE_DISTRIBUTION);
-      setTopCandidates(MOCK_TOP_CANDIDATES);
-      setPositionFit(MOCK_POSITION_FIT);
-      setTrends(MOCK_APPLICATION_TRENDS);
+      setTopCandidates([]);
+      setPositionFit([]);
+      setTrends([]);
     } finally {
       setLoading(false);
     }
