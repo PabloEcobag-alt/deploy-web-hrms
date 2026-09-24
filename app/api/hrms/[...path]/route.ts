@@ -6,7 +6,7 @@ if (process.env.NODE_ENV !== "production") {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 }
 
-const HRMS_API_URL = process.env.NEXT_PUBLIC_HRMS_API_URL ?? "https://localhost:5165";
+const HRMS_API_URL = "https://dicing-saxophone-food.ngrok-free.dev";
 
 async function proxyRequest(request: NextRequest, context: { params: Promise<{ path: string[] }> }) {
   const { path } = await context.params;

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const authApiClient = axios.create({
-  baseURL: "https://dicing-saxophone-food.ngrok-free.dev",
+  baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5001",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
