@@ -35,14 +35,27 @@ const STAGE_STYLES: Record<string, string> = {
   Failed: "bg-rose-50 text-rose-700 border-rose-200/60",
 };
 
+import { getAllApplicants } from "@/lib/services/applicantService";
+import apiClient from "@/lib/services/apiClient";
+
 export default function ViewDashboard() {
   // ── Stat card metrics ────────────────────────────────────────────────
   const [summary, setSummary] = React.useState<HrmsDashboardSummary | null>(null);
+  const [applicants, setApplicants] = React.useState<any[] | null>(null);
+  const [employees, setEmployees] = React.useState<any[] | null>(null);
 
   React.useEffect(() => {
     getHrmsDashboardSummary()
       .then((data) => setSummary(data))
       .catch((err) => console.error("Failed to load HRMS summary", err));
+      
+    getAllApplicants()
+      .then((data) => setApplicants(data))
+      .catch((err) => console.error("Failed to load applicants", err));
+      
+    apiClient.get('/api/admin/digital201/employees')
+      .then((res) => setEmployees(res.data))
+      .catch((err) => console.error("Failed to load employees", err));
   }, []);
 
   const totalEmployees = summary ? summary.totalEmployees : MOCK_EMPLOYEES.length;
@@ -54,10 +67,16 @@ export default function ViewDashboard() {
   const attendanceRate = totalAttendanceRecords > 0 ? Math.round((onTimeCount / totalAttendanceRecords) * 100) : 0;
   const totalPayroll = summary ? summary.totalPayroll : MOCK_PAYROLL.reduce((sum, r) => sum + r.realPay, 0);
 
+  // Use dynamic arrays if available, else fallback to MOCK
+  const applicantsList = applicants || MOCK_APPLICANTS;
+  const employeesList = employees || MOCK_EMPLOYEES;
+
   // ── Chart data ───────────────────────────────────────────────────────
   const applicantsByStage: ChartDatum[] = Object.entries(
-    MOCK_APPLICANTS.reduce((acc, a) => {
-      acc[a.stage] = (acc[a.stage] || 0) + 1;
+    applicantsList.reduce((acc, a) => {
+      // Map API fields (hiring_Stage or stage)
+      const stage = a.hiring_Stage || a.stage || "Initial Interview";
+      acc[stage] = (acc[stage] || 0) + 1;
       return acc;
     }, {} as Record<string, number>)
   ).map(([name, value]) => ({ name, value }));
@@ -70,15 +89,20 @@ export default function ViewDashboard() {
   ].filter((d) => d.value > 0);
 
   const employeesByStatus: ChartDatum[] = Object.entries(
-    MOCK_EMPLOYEES.reduce((acc, e) => {
-      acc[e.status] = (acc[e.status] || 0) + 1;
+    employeesList.reduce((acc, e) => {
+      const status = e.status || "Probationary";
+      acc[status] = (acc[status] || 0) + 1;
       return acc;
     }, {} as Record<string, number>)
   ).map(([name, value]) => ({ name, value }));
 
   // ── Recent activity ──────────────────────────────────────────────────
-  const recentApplicants = [...MOCK_APPLICANTS]
-    .sort((a, b) => Number(b.id) - Number(a.id))
+  const recentApplicants = [...applicantsList]
+    .sort((a, b) => {
+      const aId = a.applicant_Id || a.id;
+      const bId = b.applicant_Id || b.id;
+      return Number(bId) - Number(aId);
+    })
     .slice(0, 5);
 
   const topEarners = [...MOCK_PAYROLL].sort((a, b) => b.realPay - a.realPay).slice(0, 5);
@@ -156,14 +180,14 @@ export default function ViewDashboard() {
             </TableHeader>
             <TableBody>
               {recentApplicants.map((a) => (
-                <TableRow key={a.id} className="hover:bg-muted/50 transition-colors border-b border-border">
+                <TableRow key={a.applicant_Id || a.id} className="hover:bg-muted/50 transition-colors border-b border-border">
                   <TableCell className="w-[280px] min-w-[280px] px-5 py-4">
-                    <span className="font-medium text-base text-foreground">{a.firstName} {a.lastName}</span>
+                    <span className="font-medium text-base text-foreground">{a.first_Name || a.firstName} {a.last_Name || a.lastName}</span>
                   </TableCell>
                   <TableCell className="w-[220px] min-w-[220px] px-5 py-4 text-base font-normal text-muted-foreground">{a.position}</TableCell>
                   <TableCell className="w-[180px] min-w-[180px] px-5 py-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${STAGE_STYLES[a.stage] || "bg-slate-50 text-slate-700 border-slate-200/60"}`}>
-                      {a.stage}
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${STAGE_STYLES[a.hiring_Stage || a.stage] || "bg-slate-50 text-slate-700 border-slate-200/60"}`}>
+                      {a.hiring_Stage || a.stage || "Initial Interview"}
                     </span>
                   </TableCell>
                   <TableCell className="w-[160px] min-w-[160px] px-5 py-4 text-base font-normal text-muted-foreground">{a.source}</TableCell>
