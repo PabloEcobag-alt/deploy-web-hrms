@@ -57,16 +57,24 @@ export default function RecruitmentAnalyticsPage() {
         getApplicationTrends(startDate, endDate),
       ]);
 
-      setSummary(s ?? MOCK_ANALYTICS_SUMMARY);
-      setDistribution(d ?? MOCK_SCORE_DISTRIBUTION);
+      setSummary(s ?? {
+        totalApplicants: 0, totalScored: 0, qualifiedCount: 0, reviewCount: 0,
+        notQualifiedCount: 0, qualifiedRate: 0, reviewRate: 0, notQualifiedRate: 0,
+        averageMatchScore: 0, lastScoredAt: null
+      });
+      setDistribution(d ?? { buckets: [] });
       setTopCandidates(t ?? []);
       setPositionFit(p ?? []);
       setTrends(tr ?? []);
     } catch (error) {
       console.error("Failed to load recruitment analytics:", error);
       // Keep empty states on error
-      setSummary(MOCK_ANALYTICS_SUMMARY);
-      setDistribution(MOCK_SCORE_DISTRIBUTION);
+      setSummary({
+        totalApplicants: 0, totalScored: 0, qualifiedCount: 0, reviewCount: 0,
+        notQualifiedCount: 0, qualifiedRate: 0, reviewRate: 0, notQualifiedRate: 0,
+        averageMatchScore: 0, lastScoredAt: null
+      });
+      setDistribution({ buckets: [] });
       setTopCandidates([]);
       setPositionFit([]);
       setTrends([]);
