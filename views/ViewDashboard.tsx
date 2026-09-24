@@ -53,7 +53,7 @@ export default function ViewDashboard() {
       .then((data) => setApplicants(data))
       .catch((err) => console.error("Failed to load applicants", err));
       
-    apiClient.get('/api/admin/digital201/employees')
+    apiClient.get('/api/employees')
       .then((res) => setEmployees(res.data))
       .catch((err) => console.error("Failed to load employees", err));
   }, []);
