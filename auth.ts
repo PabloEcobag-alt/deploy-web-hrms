@@ -65,7 +65,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return isAuthPath || isSignInPage;
       }
       if (auth?.user && (isAuthPath || isSignInPage)) {
-        return Response.redirect(new URL(requiredEnvironment("AUTH_URL")));
+        const baseUrl = process.env.AUTH_URL || request.nextUrl.origin;
+        return Response.redirect(new URL(baseUrl));
       }
       if (!auth?.user && !isAuthPath && !isSignInPage) return false;
 
