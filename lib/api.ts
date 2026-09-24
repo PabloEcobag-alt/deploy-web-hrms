@@ -4,6 +4,10 @@ import { toast } from "sonner";
 
 const api = axios.create({
   baseURL: "https://dicing-saxophone-food.ngrok-free.dev",
+  headers: {
+    "Content-Type": "application/json",
+    "ngrok-skip-browser-warning": "true",
+  },
 });
 
 // Global interceptor for kill-switch functionality

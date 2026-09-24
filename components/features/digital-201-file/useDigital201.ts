@@ -18,7 +18,7 @@ interface AuthUserLike {
  * Encapsulates all state, effects, and handlers for ViewDigital201File.
  */
 export function useDigital201(user: AuthUserLike | null | undefined) {
-  const role = user?.roles?.[0];
+  const role = (user?.role === "Administrator" ? "Admin" : user?.role) || (user as any)?.roles?.[0];
 
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -129,24 +129,52 @@ export function useDigital201(user: AuthUserLike | null | undefined) {
     loadAdminEmployees();
   }, [role]);
 
-  const regularEmployees = MOCK_EMPLOYEES.filter(e => e.status === "Regular").length;
-  const probationaryEmployees = MOCK_EMPLOYEES.filter(e => e.status === "Probationary").length;
+  const dataSource: Employee[] = role === "Admin" ? adminEmployees.map(mapAdminDtoToEmployee) : MOCK_EMPLOYEES;
 
-  const pendingDocuments = MOCK_EMPLOYEES.filter(e =>
+  const regularEmployees = dataSource.filter(e => e.status === "Regular").length;
+  const probationaryEmployees = dataSource.filter(e => e.status === "Probationary").length;
+
+  const pendingDocuments = dataSource.filter(e =>
     !e.documents.personal.completed ||
     !e.documents.government.completed ||
     !e.documents.company.completed ||
     !e.documents.performance.completed
   ).length;
 
-  const handleViewFile = (employee: Employee) => {
-    setSelectedEmployee(employee);
-    setProfileModalOpen(true);
+  const handleViewFile = async (employee: Employee) => {
+    try {
+      if (role === "Admin") {
+        const response = await api.get(`/api/admin/digital201/employees/${employee.id}`);
+        const fullEmployee = mapAdminDtoToEmployee(response.data);
+        setSelectedEmployee(fullEmployee);
+      } else {
+        setSelectedEmployee(employee);
+      }
+      setProfileModalOpen(true);
+    } catch (error) {
+      console.error("Failed to load full employee profile:", error);
+      toast.error("Failed to load employee profile");
+      setSelectedEmployee(employee);
+      setProfileModalOpen(true);
+    }
   };
 
-  const handleEditFile = (employee: Employee) => {
-    setSelectedEmployee(employee);
-    setEditModalOpen(true);
+  const handleEditFile = async (employee: Employee) => {
+    try {
+      if (role === "Admin") {
+        const response = await api.get(`/api/admin/digital201/employees/${employee.id}`);
+        const fullEmployee = mapAdminDtoToEmployee(response.data);
+        setSelectedEmployee(fullEmployee);
+      } else {
+        setSelectedEmployee(employee);
+      }
+      setEditModalOpen(true);
+    } catch (error) {
+      console.error("Failed to load full employee profile for edit:", error);
+      toast.error("Failed to load employee data for edit");
+      setSelectedEmployee(employee);
+      setEditModalOpen(true);
+    }
   };
 
   const expiringDocs = expiringDocuments.map(doc => ({
@@ -156,9 +184,6 @@ export function useDigital201(user: AuthUserLike | null | undefined) {
     daysLeft: doc.daysUntilExpiration,
     expirationDate: doc.expirationDate,
   })).sort((a, b) => a.daysLeft - b.daysLeft);
-
-  const hasAdminData = role === "Admin" && adminEmployees.length > 0;
-  const dataSource: Employee[] = hasAdminData ? adminEmployees.map(mapAdminDtoToEmployee) : MOCK_EMPLOYEES;
 
   const filteredEmployees = dataSource.filter(emp => {
     if (filterPosition && emp.position !== filterPosition) return false;
