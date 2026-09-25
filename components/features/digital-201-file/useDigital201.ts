@@ -7,7 +7,7 @@ import { getEmployeeByErpUserId, type EmployeeProfileDto } from "@/lib/services"
 
 import type { Employee, PendingHire, AdminEmployeeListDto } from "./types";
 import { mapAdminDtoToEmployee } from "./utils";
-import { MOCK_EMPLOYEES } from "./mockData";
+// import { MOCK_EMPLOYEES } from "./mockData";
 
 interface AuthUserLike {
   id?: string | number;
@@ -129,7 +129,7 @@ export function useDigital201(user: AuthUserLike | null | undefined) {
     loadAdminEmployees();
   }, [role]);
 
-  const dataSource: Employee[] = role === "Admin" ? adminEmployees.map(mapAdminDtoToEmployee) : MOCK_EMPLOYEES;
+  const dataSource: Employee[] = role === "Admin" ? adminEmployees.map(mapAdminDtoToEmployee) : [];
 
   const regularEmployees = dataSource.filter(e => e.status === "Regular").length;
   const probationaryEmployees = dataSource.filter(e => e.status === "Probationary").length;

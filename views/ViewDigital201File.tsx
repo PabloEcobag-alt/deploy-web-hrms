@@ -5,7 +5,7 @@ import {
   useDarkMode,
   useColors,
 } from "@/components/features/digital-201-file/utils";
-import { MOCK_EMPLOYEES } from "@/components/features/digital-201-file/mockData";
+// import { MOCK_EMPLOYEES } from "@/components/features/digital-201-file/mockData";
 import { EmployeeStatCard } from "@/components/features/digital-201-file/badges";
 import { EmployeeProfileModal } from "@/components/features/digital-201-file/EmployeeProfileModal";
 import { EmployeeEditModal } from "@/components/features/digital-201-file/EmployeeEditModal";
@@ -97,7 +97,7 @@ export default function ViewDigital201File() {
           )}
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-            <EmployeeStatCard label="Total Employees" count={role === "Admin" ? vm.adminEmployees.length : MOCK_EMPLOYEES.length} pendingCount={0} c={c} />
+            <EmployeeStatCard label="Total Employees" count={vm.employees.length} pendingCount={0} c={c} />
             <EmployeeStatCard label="Regular Employees" count={vm.regularEmployees} pendingCount={0} c={c} />
             <EmployeeStatCard label="Probationary" count={vm.probationaryEmployees} pendingCount={0} c={c} />
             <EmployeeStatCard label="Pending Documents" count={vm.pendingDocuments} pendingCount={0} c={c} />
@@ -177,8 +177,8 @@ export default function ViewDigital201File() {
       />
 
       {/* Action Modals */}
-      <ProbationModal isOpen={vm.probationModalOpen} onClose={() => vm.setProbationModalOpen(false)} c={c} />
-      <PendingDocsModal isOpen={vm.pendingDocsModalOpen} onClose={() => vm.setPendingDocsModalOpen(false)} c={c} />
+      <ProbationModal isOpen={vm.probationModalOpen} onClose={() => vm.setProbationModalOpen(false)} c={c} employees={vm.employees} />
+      <PendingDocsModal isOpen={vm.pendingDocsModalOpen} onClose={() => vm.setPendingDocsModalOpen(false)} c={c} employees={vm.employees} />
       <PendingOnboardingModal
         isOpen={vm.pendingOnboardingModalOpen}
         onClose={() => vm.setPendingOnboardingModalOpen(false)}

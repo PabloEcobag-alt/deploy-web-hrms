@@ -2,13 +2,13 @@
 
 import { createPortal } from "react-dom";
 import { type Colors } from "./utils";
-import { MOCK_EMPLOYEES } from "./mockData";
+// import { MOCK_EMPLOYEES } from "./mockData";
 import { MOCK_PENDING_HIRES } from "./constants";
 import { PendingHireTable } from "./EmployeeTables";
 
-export function ProbationModal({ isOpen, onClose, c }: any) {
+export function ProbationModal({ isOpen, onClose, c, employees = [] }: any) {
   if (!isOpen) return null;
-  const probationaryEmployees = MOCK_EMPLOYEES.filter(e => e.status === "Probationary");
+  const probationaryEmployees = employees.filter((e: any) => e.status === "Probationary");
 
   const getDaysRemaining = (endDateStr?: string) => {
     if (!endDateStr) return 0;
@@ -71,13 +71,13 @@ export function ProbationModal({ isOpen, onClose, c }: any) {
   );
 }
 
-export function PendingDocsModal({ isOpen, onClose, c }: any) {
+export function PendingDocsModal({ isOpen, onClose, c, employees = [] }: any) {
   if (!isOpen) return null;
-  const docsEmployees = MOCK_EMPLOYEES.filter(e =>
-    !e.documents.personal.completed ||
-    !e.documents.government.completed ||
-    !e.documents.company.completed ||
-    !e.documents.performance.completed
+  const docsEmployees = employees.filter((e: any) =>
+    !e.documents?.personal?.completed ||
+    !e.documents?.government?.completed ||
+    !e.documents?.company?.completed ||
+    !e.documents?.performance?.completed
   );
 
   return createPortal(
@@ -138,7 +138,7 @@ export function PendingOnboardingModal({ isOpen, onClose, c, onReview }: any) {
 
 // ======================== ORG CHART ========================
 
-export function OrganizationalChart({ c }: any) {
+export function OrganizationalChart({ c, employees = [] }: any) {
   return (
     <div className="p-8 rounded-xl border bg-white flex flex-col items-center justify-center min-h-[400px]" style={{ borderColor: c.cardBorder }}>
       <svg width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="text-primary mb-4 opacity-50">
@@ -147,7 +147,7 @@ export function OrganizationalChart({ c }: any) {
       <h3 className="text-xl font-bold mb-2" style={{ color: c.headingText }}>Organizational Chart</h3>
       <p className="text-sm text-center max-w-md" style={{ color: c.mutedText }}>
         The visual hierarchy map of the organization is generated from the supervisor data.
-        Currently displaying {MOCK_EMPLOYEES.length} interconnected nodes.
+        Currently displaying {employees.length} interconnected nodes.
       </p>
 
       {/* Simple visual representation for the mockup */}

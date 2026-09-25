@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { getAllApplicants, updateApplicant, createApplicant, apiClient, hireApplicant } from "@/lib/services";
 import type { Applicant, ApplicantSource, HiringStage, ApplicantFormData } from "./types";
 import { getFullName, getDaysUntil } from "./utils";
-import { MOCK_APPLICANTS } from "./mockData";
+// import { MOCK_APPLICANTS } from "./mockData";
 import { mapApplicants, buildApplicantDto } from "./logic";
 import { renderNewApplicantToast } from "./NewApplicantToast";
 
@@ -16,7 +16,7 @@ export type UserRoleMode = "manager" | "vp" | "employee";
  * Encapsulates all state, effects, and handlers for the Recruitment & Hiring view.
  */
 export function useRecruitment() {
-  const [applicants, setApplicants] = useState<Applicant[]>(MOCK_APPLICANTS);
+  const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [searchName, setSearchName] = useState("");
   const [filterPosition, setFilterPosition] = useState("");
   const [filterSource, setFilterSource] = useState<ApplicantSource | "">("");
@@ -76,12 +76,11 @@ export function useRecruitment() {
           setApplicants(mapped);
           notifyNewApplicants(mapped);
         } else {
-          setApplicants(MOCK_APPLICANTS);
+          setApplicants([]);
         }
       } catch (err) {
         console.error("Failed to fetch applicants:", err);
-        console.warn("API Error intercepted. Falling back to mock data. Error: ", err);
-        setApplicants(MOCK_APPLICANTS);
+        setApplicants([]);
       }
     };
 

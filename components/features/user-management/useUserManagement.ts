@@ -23,7 +23,7 @@ import type {
 } from "./types";
 import { APP_OPTIONS } from "./constants";
 import { buildAppAccesses, buildHrmsFormData, getAppRestrictions, getTabData, parseRoleAssignments } from "./logic";
-import { MOCK_USERS } from "./mockData";
+// import { MOCK_USERS } from "./mockData";
 
 /**
  * Encapsulates all state, effects, and handlers for the User Management view.
@@ -31,7 +31,7 @@ import { MOCK_USERS } from "./mockData";
  */
 export function useUserManagement(isAdmin: boolean) {
   const [activeTab, setActiveTab] = useState<TabKey>("all");
-  const [users, setUsers] = useState<UserReadDto[]>(MOCK_USERS);
+  const [users, setUsers] = useState<UserReadDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -68,11 +68,11 @@ export function useUserManagement(isAdmin: boolean) {
     setErrorMsg("");
     try {
       const data = await getUsers();
-      setUsers(data && data.length > 0 ? data : MOCK_USERS);
+      setUsers(data || []);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Unknown error";
       setErrorMsg(`Failed to load users: ${msg}`);
-      setUsers(MOCK_USERS);
+      setUsers([]);
     } finally {
       setLoading(false);
     }
