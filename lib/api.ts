@@ -3,7 +3,7 @@ import { toast } from "sonner";
 // import { getSession } from "next-auth/react";
 
 const api = axios.create({
-  baseURL: "https://dicing-saxophone-food.ngrok-free.dev",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://api-hrms-prod-dcfne2c0baa4cgd5.australiaeast-01.azurewebsites.net/api",
   headers: {
     "Content-Type": "application/json",
     "ngrok-skip-browser-warning": "true",
