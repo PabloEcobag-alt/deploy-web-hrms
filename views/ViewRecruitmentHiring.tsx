@@ -152,11 +152,11 @@ export default function ViewRecruitmentHiring() {
         }
         confirmLabel={vm.pendingSave?.mode === "add" ? "Add Applicant" : "Save Changes"}
         cancelLabel="Cancel"
+        loading={vm.isSubmitting}
         onCancel={() => vm.setPendingSave(null)}
         onConfirm={() => {
           if (vm.pendingSave) {
             const { form, mode } = vm.pendingSave;
-            vm.setPendingSave(null);
             void vm.doSave(form, mode);
           }
         }}

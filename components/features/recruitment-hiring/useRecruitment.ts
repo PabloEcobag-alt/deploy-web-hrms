@@ -27,6 +27,7 @@ export function useRecruitment() {
   const [selectedApplicant, setSelectedApplicant] = useState<Applicant | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Applicant | null>(null);
   const [pendingSave, setPendingSave] = useState<{ form: ApplicantFormData; mode: "add" | "edit" } | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [scheduleModalFor, setScheduleModalFor] = useState<string | null>(null);
@@ -176,6 +177,9 @@ export function useRecruitment() {
 
   // Handlers
   async function doSave(form: ApplicantFormData, mode: "add" | "edit") {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
     if (mode === "add") {
       try {
         const applicantDto = buildApplicantDto(form);
@@ -186,6 +190,8 @@ export function useRecruitment() {
       } catch (error) {
         console.error("Failed to create applicant:", error);
         toast.error("Failed to add applicant");
+        setIsSubmitting(false);
+        setPendingSave(null);
         return;
       }
     } else if (mode === "edit" && selectedApplicant) {
@@ -233,11 +239,15 @@ export function useRecruitment() {
       } catch (error: any) {
         console.error("Failed to update applicant:", error);
         toast.error("Failed to update applicant. Please try again.");
+        setIsSubmitting(false);
+        setPendingSave(null);
         return;
       }
     }
     setModal(null);
     setSelectedApplicant(null);
+    setPendingSave(null);
+    setIsSubmitting(false);
   }
 
   function handleTransformError(error: any) {
@@ -296,7 +306,7 @@ export function useRecruitment() {
     searchName, setSearchName, filterPosition, setFilterPosition, filterSource, setFilterSource,
     filterStage, setFilterStage, mainTableTab, setMainTableTab, vpSortBy, setVpSortBy,
     modal, setModal, selectedApplicant, setSelectedApplicant, deleteTarget, setDeleteTarget,
-    pendingSave, setPendingSave, scheduleModalFor, setScheduleModalFor,
+    pendingSave, setPendingSave, scheduleModalFor, setScheduleModalFor, isSubmitting,
     trainingCount, urgentInterviews, activeCandidates, hiredCount, forInterviewCount,
     probationaryStageCount, reqWalkingCount, upcomingInterviews,
     filtered, tabFiltered, vpApplicants, paginatedApplicants,
