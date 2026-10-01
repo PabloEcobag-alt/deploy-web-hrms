@@ -213,6 +213,8 @@ export function useRecruitment() {
           } catch (error: any) {
             console.error("Failed to transform applicant to employee:", error);
             handleTransformError(error);
+            setIsSubmitting(false);
+            return;
           }
         } else {
           await updateApplicant(applicantId, {
