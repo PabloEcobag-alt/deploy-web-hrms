@@ -2,7 +2,7 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { toast } from "sonner";
 
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_HRMS_API_URL || "https://api-hrms-prod-dcfne2c0baa4cgd5.australiaeast-01.azurewebsites.net",
+  baseURL: "https://dicing-saxophone-food.ngrok-free.dev",
   headers: {
     "Content-Type": "application/json",
     "ngrok-skip-browser-warning": "true",

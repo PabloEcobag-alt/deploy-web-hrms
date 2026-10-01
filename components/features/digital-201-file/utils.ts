@@ -119,9 +119,9 @@ export function mapAdminDtoToEmployee(adminDto: any): Employee {
     assignedLocation: adminDto.assignedLocation || adminDto.AssignedLocation || "",
     department: adminDto.department || adminDto.Department || "Not Available",
     supervisor: adminDto.supervisor || adminDto.Supervisor || "",
-    hireDate: adminDto.dateHired || adminDto.DateHired || "",
+    hireDate: "",
     status: (adminDto.status || adminDto.Status || "Active") as EmployeeStatus,
-    email: adminDto.email || adminDto.Email || adminDto.emailAddress || adminDto.EmailAddress || "",
+    email: adminDto.emailAddress || adminDto.EmailAddress || "",
     phone: adminDto.phoneNumber || adminDto.PhoneNumber || "",
     avatarIndex: 0,
     documents: {
@@ -130,10 +130,10 @@ export function mapAdminDtoToEmployee(adminDto: any): Employee {
       company: { completed: false, lastUpdated: "", expiryDate: "" },
       performance: { completed: false, lastUpdated: "", expiryDate: "" },
     },
-    address: adminDto.emergencyContactAddress || adminDto.EmergencyContactAddress || "",
+    address: "",
     emergencyContact: {
       name: adminDto.emergencyContactName || adminDto.EmergencyContactName || "",
-      relationship: adminDto.emergencyContactRelationship || adminDto.EmergencyContactRelationship || "",
+      relationship: "",
       phone: adminDto.emergencyContactPhone || adminDto.EmergencyContactPhone || "",
     },
     dateOfBirth: adminDto.dateOfBirth || adminDto.DateOfBirth || "",
@@ -143,22 +143,15 @@ export function mapAdminDtoToEmployee(adminDto: any): Employee {
     governmentIds: {
       sss: adminDto.sss || adminDto.SSS || "",
       philHealth: adminDto.philHealth || adminDto.PhilHealth || "",
-      hdmf: adminDto.pagIbig || adminDto.PagIbig || adminDto.hdmf || adminDto.HDMF_Number || "",
+      hdmf: adminDto.pagIbig || adminDto.PagIbig || "",
       tin: adminDto.tin || adminDto.TIN || "",
-      nbiExpiration: adminDto.nbiClearanceDate || adminDto.NbiClearanceDate || "",
-      barangayExpiration: adminDto.barangayClearanceDate || adminDto.BarangayClearanceDate || "",
+      nbiExpiration: adminDto.nbiExpiration || adminDto.NbiClearanceDate || "",
+      barangayExpiration: adminDto.barangayExpiration || adminDto.BarangayClearanceDate || "",
     },
     attendanceSummary: undefined as any,
     expiringDocuments: undefined,
     companyProperty: {
       employeeId: adminDto.companyIdNumber || adminDto.CompanyIdNumber || "",
-      idIssueDate: "",
-      uniformSize: { top: "", bottom: "", shoes: "" },
-      uniformIssueDate: "",
-      equipment: []
-    },
-    journey: adminDto.journey || adminDto.Journey || [],
-    auditLogs: adminDto.auditLogs || adminDto.AuditLogs || [],
-    backendDocuments: adminDto.documents || adminDto.Documents || [],
+    } as any,
   };
 }

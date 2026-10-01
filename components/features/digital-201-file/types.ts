@@ -99,12 +99,6 @@ export interface Employee {
     details: string;
   }[];
   probationEndDate?: string;
-  backendDocuments?: {
-    documentName: string;
-    documentType: string;
-    fileUrl: string;
-    status: string;
-  }[];
 }
 
 export interface PendingHire {
