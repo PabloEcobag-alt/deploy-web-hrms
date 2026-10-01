@@ -10,6 +10,7 @@ import { PositionFitTable } from "@/components/analytics/PositionFitTable";
 import { ApplicationTrendsChart } from "@/components/analytics/ApplicationTrendsChart";
 import { DateRangePicker } from "@/components/analytics/DateRangePicker";
 import { CSVExportButton } from "@/components/analytics/CSVExportButton";
+import { RescoreButton } from "@/components/analytics/RescoreButton";
 import {
   getDashboardSummary,
   getScoreDistribution,
@@ -118,6 +119,7 @@ export default function RecruitmentAnalyticsPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
+          <RescoreButton />
           <DateRangePicker onDateChange={handleDateChange} />
           <CSVExportButton startDate={startDate} endDate={endDate} />
         </div>

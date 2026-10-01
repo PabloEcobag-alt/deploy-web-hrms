@@ -105,3 +105,13 @@ export const exportAllCandidates = async (startDate?: string, endDate?: string):
     return [];
   }
 };
+
+export const rescoreAllApplicants = async (): Promise<{ enqueued: number }> => {
+  try {
+    const { data } = await apiClient.post<{ enqueued: number }>(`${BASE_PATH}/rescore`);
+    return data;
+  } catch (error) {
+    console.error("Failed to trigger rescore", error);
+    throw error;
+  }
+};
