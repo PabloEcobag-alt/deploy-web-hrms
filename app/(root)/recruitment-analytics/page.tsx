@@ -57,19 +57,27 @@ export default function RecruitmentAnalyticsPage() {
         getApplicationTrends(startDate, endDate),
       ]);
 
-      setSummary(s ?? MOCK_ANALYTICS_SUMMARY);
-      setDistribution(d ?? MOCK_SCORE_DISTRIBUTION);
-      setTopCandidates(t && t.length > 0 ? t : MOCK_TOP_CANDIDATES);
-      setPositionFit(p && p.length > 0 ? p : MOCK_POSITION_FIT);
-      setTrends(tr && tr.length > 0 ? tr : MOCK_APPLICATION_TRENDS);
+      setSummary(s ?? {
+        totalApplicants: 0, totalScored: 0, qualifiedCount: 0, reviewCount: 0,
+        notQualifiedCount: 0, qualifiedRate: 0, reviewRate: 0, notQualifiedRate: 0,
+        averageMatchScore: 0, lastScoredAt: null
+      });
+      setDistribution(d ?? { buckets: [] });
+      setTopCandidates(t ?? []);
+      setPositionFit(p ?? []);
+      setTrends(tr ?? []);
     } catch (error) {
       console.error("Failed to load recruitment analytics:", error);
-      // Populate the screen with mock data when the API is unavailable.
-      setSummary(MOCK_ANALYTICS_SUMMARY);
-      setDistribution(MOCK_SCORE_DISTRIBUTION);
-      setTopCandidates(MOCK_TOP_CANDIDATES);
-      setPositionFit(MOCK_POSITION_FIT);
-      setTrends(MOCK_APPLICATION_TRENDS);
+      // Keep empty states on error
+      setSummary({
+        totalApplicants: 0, totalScored: 0, qualifiedCount: 0, reviewCount: 0,
+        notQualifiedCount: 0, qualifiedRate: 0, reviewRate: 0, notQualifiedRate: 0,
+        averageMatchScore: 0, lastScoredAt: null
+      });
+      setDistribution({ buckets: [] });
+      setTopCandidates([]);
+      setPositionFit([]);
+      setTrends([]);
     } finally {
       setLoading(false);
     }

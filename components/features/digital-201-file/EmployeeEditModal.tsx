@@ -36,7 +36,52 @@ export function EmployeeEditModal({ employee, isOpen, onClose, c, isDark, onEmpl
     setMounted(true);
     if (isOpen) {
       setActiveTabId("personal");
-      setCheckedItems(getMockCheckedItems(employee.id));
+      if (employee.backendDocuments && employee.backendDocuments.length > 0) {
+        const checks: Record<string, boolean> = {};
+        const mapping: Record<string, string> = {
+          "Resume": "resume",
+          "Personal Data Sheet": "pds",
+          "ID Picture": "id_pic",
+          "2x2 ID Picture": "id_pic",
+          "Birth Certificate": "birth_cert",
+          "Marriage Certificate": "marriage_cert",
+          "Job Description": "jd",
+          "Employment Contract": "contract",
+          "Company Rules": "rules",
+          "Company Rules & Regs": "rules",
+          "NDA": "nda",
+          "Handbook": "handbook",
+          "Handbook Acknowledgment": "handbook",
+          "Salary Agreement": "salary",
+          "BIR 2316": "bir2316",
+          "Attendance Record": "dtr",
+          "Acknowledgment Receipt": "ack_receipt",
+          "Medical Certificate": "med_cert",
+          "Drug Test Result": "drug_test",
+          "Drug Test": "drug_test",
+          "Vaccination Card": "vax_card",
+          "Performance Evaluation": "perf_eval",
+          "Incident Report": "incident",
+          "Disciplinary Record": "disciplinary",
+          "Promotion Record": "promotion",
+        };
+        employee.backendDocuments.forEach(doc => {
+          const id = mapping[doc.documentName] || doc.documentName.toLowerCase();
+          checks[id] = true;
+        });
+        
+        if (employee.governmentIds?.sss) checks["sss"] = true;
+        if (employee.governmentIds?.philHealth) checks["philhealth"] = true;
+        if (employee.governmentIds?.hdmf) checks["pagibig"] = true;
+        if (employee.governmentIds?.tin) checks["tin"] = true;
+        if (employee.governmentIds?.nbiExpiration) checks["nbi"] = true;
+        if (employee.governmentIds?.barangayExpiration) checks["brgy"] = true;
+        if (employee.companyProperty?.employeeId) checks["company_id"] = true;
+
+        setCheckedItems(checks);
+      } else {
+        setCheckedItems(getMockCheckedItems(employee.id));
+      }
       setViewingDocumentId(null);
 
       const fetchEmployeeProfile = async () => {

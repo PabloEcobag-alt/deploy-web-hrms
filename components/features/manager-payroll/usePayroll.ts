@@ -9,7 +9,7 @@ import {
   type PayrollFinalizeRequestDto,
 } from "@/lib/services";
 import { type CutoffType, type PayrollRow, formatCurrency, getCutoffDate } from "./types";
-import { MOCK_PAYROLL_ROWS } from "./mockData";
+// import { MOCK_PAYROLL_ROWS } from "./mockData";
 
 /**
  * Encapsulates state, data loading, and payroll actions for the
@@ -56,11 +56,11 @@ export function usePayroll(readOnly: boolean) {
           payoutMethod: run.Payout_Method as "ATM" | "Cash" | "GCash",
           status: run.Status,
         }));
-        // Fall back to mock data when the API returns nothing.
-        setPayrollData(rows.length > 0 ? rows : MOCK_PAYROLL_ROWS);
+        // Removed mock data fallback
+        setPayrollData(rows);
       } catch (err: unknown) {
-        // Show mock data so the dashboard is populated even when the API is unavailable.
-        setPayrollData(MOCK_PAYROLL_ROWS);
+        // Show empty data if API is unavailable
+        setPayrollData([]);
       } finally {
         setLoading(false);
       }
