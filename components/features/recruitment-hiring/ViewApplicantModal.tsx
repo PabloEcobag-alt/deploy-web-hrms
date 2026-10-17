@@ -80,6 +80,7 @@ export function ViewApplicantModal({ applicant, onClose, onEdit, onSchedule, onD
   const approvedSalaryVal = applicant.approvedSalary ?? targetSalaryVal;
 
   const infoRows: [string, string][] = [
+    ...(applicant.referenceNumber ? [["Reference No.", applicant.referenceNumber] as [string, string]] : []),
     ["Position", applicant.position],
     ["Target Salary", targetSalaryVal ? `₱${targetSalaryVal.toLocaleString()}` : "-"],
     ["Approved / Offered", approvedSalaryVal ? `₱${approvedSalaryVal.toLocaleString()}` : "-"],
@@ -99,8 +100,13 @@ export function ViewApplicantModal({ applicant, onClose, onEdit, onSchedule, onD
       <DialogContent className="flex max-h-[85vh] flex-col gap-0 p-0 text-black sm:max-w-[560px]">
         <DialogHeader className="space-y-3 border-b px-5 py-4">
           <div className="flex items-start justify-between gap-3">
-            <div>
+            <div className="flex items-center gap-2 flex-wrap">
               <DialogTitle className="text-xl font-medium text-black">{getFullName(applicant)}</DialogTitle>
+              {applicant.referenceNumber && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-semibold bg-violet-100 text-violet-800 border border-violet-200">
+                  {applicant.referenceNumber}
+                </span>
+              )}
             </div>
             <div className="mr-6 flex shrink-0 items-center gap-2">
               {onSchedule && (

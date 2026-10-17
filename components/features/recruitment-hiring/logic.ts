@@ -53,6 +53,7 @@ export function mapApplicants(data: any): Applicant[] {
       approvedSalary: a.approved_Salary ?? a.approvedSalary ?? undefined,
       targetSalary: a.target_Salary ?? a.targetSalary ?? undefined,
       interviewer: a.interviewer ?? a.Interviewer ?? undefined,
+      referenceNumber: a.reference_Number ?? a.referenceNumber ?? undefined,
     }))
     .sort((x: Applicant, y: Applicant) => Number(y.id) - Number(x.id));
 }

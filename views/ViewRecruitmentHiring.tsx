@@ -18,6 +18,9 @@ import { ConfirmDialog } from "@/components/features/recruitment-hiring/ConfirmD
 import { RecruitmentTableSection } from "@/components/features/recruitment-hiring/RecruitmentTableSection";
 import { ScheduleInterviewModal } from "@/components/features/recruitment-hiring/ScheduleInterviewModal";
 import { ApplicantEmailModal } from "@/components/features/recruitment-hiring/ApplicantEmailModal";
+import { RefreshCw } from "lucide-react";
+import { toast } from "sonner";
+import { syncJobPostingsToEcommerce } from "@/lib/services";
 
 export default function ViewRecruitmentHiring() {
   const isDark = useDarkMode();
@@ -27,6 +30,23 @@ export default function ViewRecruitmentHiring() {
 
   const vm = useRecruitment();
   const [emailApplicant, setEmailApplicant] = useState<Applicant | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  const handleSyncPostings = async () => {
+    try {
+      setIsSyncing(true);
+      const res = await syncJobPostingsToEcommerce();
+      if (res.success) {
+        toast.success("Job postings successfully broadcasted to ecommerce portal!");
+      } else {
+        toast.warning(res.message || "Sync completed with warnings.");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to sync postings to ecommerce.");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   const cardStyle = {
     background: c.cardBg,
@@ -45,17 +65,36 @@ export default function ViewRecruitmentHiring() {
           <p style={{ margin: "4px 0 0", fontSize: 13, color: c.mutedText }}>Manage job applications and interviews</p>
         </div>
         {isAdmin && (
-          <button onClick={() => { vm.setModal("add"); vm.setSelectedApplicant(null); }} style={{
-            display: "flex", alignItems: "center", gap: 6,
-            padding: "9px 18px", background: "#000000", color: "white",
-            borderRadius: 8, border: "none", cursor: "pointer",
-            fontSize: 13, fontWeight: 600,
-          }}>
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            Add New Applicant
-          </button>
+          <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+            <button 
+              disabled={isSyncing}
+              onClick={handleSyncPostings} 
+              style={{
+                display: "flex", alignItems: "center", gap: 6,
+                padding: "9px 16px", background: isDark ? "#1e293b" : "#ffffff", 
+                color: c.headingText,
+                borderRadius: 8, border: `1px solid ${c.cardBorder}`, 
+                cursor: isSyncing ? "not-allowed" : "pointer",
+                fontSize: 13, fontWeight: 500,
+                opacity: isSyncing ? 0.7 : 1,
+              }}
+              title="Broadcast canonical HRMS job postings to Bren Raphael's Online Careers portal via signed webhook"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin text-purple-600" : ""}`} />
+              {isSyncing ? "Syncing..." : "Sync Careers to Ecommerce"}
+            </button>
+            <button onClick={() => { vm.setModal("add"); vm.setSelectedApplicant(null); }} style={{
+              display: "flex", alignItems: "center", gap: 6,
+              padding: "9px 18px", background: "#000000", color: "white",
+              borderRadius: 8, border: "none", cursor: "pointer",
+              fontSize: 13, fontWeight: 600,
+            }}>
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Add New Applicant
+            </button>
+          </div>
         )}
       </div>
 

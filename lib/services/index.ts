@@ -20,7 +20,7 @@ export type {
 
 export { getUsers, registerUser, updateUserProfile, updateUserApps, resetPassword } from "./authService";
 export { updateUserComprehensive, getUnregisteredEmployees, getEmployeeByErpUserId, linkErpUser } from "./userManagementService";
-export { getAllApplicants, createApplicant, hireApplicant, updateApplicant } from "./applicantService";
+export { getAllApplicants, createApplicant, hireApplicant, updateApplicant, syncJobPostingsToEcommerce } from "./applicantService";
 
 export type {
   UserReadDto,

@@ -56,3 +56,13 @@ export const updateApplicant = async (id: number, data: any): Promise<boolean> =
     throw error;
   }
 };
+
+export const syncJobPostingsToEcommerce = async (): Promise<{ success: boolean; message: string }> => {
+  try {
+    const response = await apiClient.post("/api/applications/sync-postings");
+    return response.data;
+  } catch (error: any) {
+    console.error("Sync job postings error:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || "Unable to sync job postings to ecommerce portal");
+  }
+};

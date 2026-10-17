@@ -70,7 +70,14 @@ export function ApplicantTable({
             >
               <TableCell className="w-[320px] min-w-[320px] px-5 py-4">
                 <div>
-                  <span className="font-medium text-lg text-foreground hover:underline block">{getFullName(a)}</span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-medium text-lg text-foreground hover:underline">{getFullName(a)}</span>
+                    {a.referenceNumber && (
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-violet-100 text-violet-800 dark:bg-violet-900/40 dark:text-violet-300 border border-violet-200 dark:border-violet-800" title={`Ecommerce Reference: ${a.referenceNumber}`}>
+                        {a.referenceNumber}
+                      </span>
+                    )}
+                  </div>
                   <span className="text-sm text-muted-foreground block">{a.email}</span>
                 </div>
               </TableCell>
@@ -155,7 +162,16 @@ export function VPReadOnlyTable({ applicants, c }: { applicants: Applicant[]; c:
       <TableBody>
         {applicants.map((a) => (
           <TableRow key={a.id} className="cursor-pointer hover:bg-muted/50 transition-colors border-b border-border">
-            <TableCell className="w-[280px] min-w-[280px] font-medium text-lg text-foreground px-5 py-4">{getFullName(a)}</TableCell>
+            <TableCell className="w-[280px] min-w-[280px] px-5 py-4">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-medium text-lg text-foreground">{getFullName(a)}</span>
+                {a.referenceNumber && (
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-violet-100 text-violet-800 dark:bg-violet-900/40 dark:text-violet-300 border border-violet-200 dark:border-violet-800" title={`Ecommerce Reference: ${a.referenceNumber}`}>
+                    {a.referenceNumber}
+                  </span>
+                )}
+              </div>
+            </TableCell>
             <TableCell className="w-[220px] min-w-[220px] text-base text-foreground px-5 py-4 font-normal">{a.position}</TableCell>
             <TableCell className="w-[180px] min-w-[180px] px-5 py-4"><StageBadge stage={a.stage} c={c} /></TableCell>
             <TableCell className="w-[220px] min-w-[220px] px-5 py-4"><DateBadge date={a.interviewDate} c={c} /></TableCell>

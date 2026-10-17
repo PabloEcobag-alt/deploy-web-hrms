@@ -44,6 +44,7 @@ export interface Applicant {
   approvedSalary?: number;
   targetSalary?: number;
   interviewer?: string;
+  referenceNumber?: string;
 }
 
 export interface ApplicantFormData {
