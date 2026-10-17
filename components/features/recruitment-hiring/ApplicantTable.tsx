@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { MoreVertical, Pencil, Trash2, Mail } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -27,7 +27,7 @@ import {
 import { StatusBadge, StageBadge, DateBadge } from "./badges";
 
 export function ApplicantTable({
-  applicants, c, onView, onEdit, onStageChange, onDelete, onSchedule,
+  applicants, c, onView, onEdit, onStageChange, onDelete, onSchedule, onEmail,
 }: {
   applicants: Applicant[];
   c: ReturnType<typeof useColors>;
@@ -37,6 +37,7 @@ export function ApplicantTable({
   onStageChange: (id: string, stage: HiringStage) => void;
   onDelete: (a: Applicant) => void;
   onSchedule: (a: Applicant) => void;
+  onEmail?: (a: Applicant) => void;
 }) {
   if (!applicants.length) {
     return (
@@ -76,7 +77,14 @@ export function ApplicantTable({
               <TableCell className="w-[200px] min-w-[200px] px-5 py-4 text-base font-normal text-foreground">
                 {a.position}
               </TableCell>
-              <TableCell className="w-[180px] min-w-[180px] px-5 py-4"><StageBadge stage={a.stage} c={c} /></TableCell>
+              <TableCell className="w-[180px] min-w-[180px] px-5 py-4">
+                <StageBadge stage={a.stage} c={c} />
+                {a.interviewer && (
+                  <span className="mt-1 block text-xs text-muted-foreground truncate max-w-[160px]" title={`Evaluator: ${a.interviewer}`}>
+                    👤 {a.interviewer}
+                  </span>
+                )}
+              </TableCell>
               <TableCell className="w-[150px] min-w-[150px] px-5 py-4">
                 <div className="flex flex-col gap-0.5 text-sm text-muted-foreground font-normal">
                   <span>IDs: {govDone}/{GOVERNMENT_IDS.length}</span>
@@ -96,7 +104,7 @@ export function ApplicantTable({
                       <MoreVertical className="h-4 w-4" />
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-44 rounded-lg border border-border bg-white p-1.5 shadow-md">
+                  <DropdownMenuContent align="end" className="w-52 rounded-lg border border-border bg-white p-1.5 shadow-md">
                     <DropdownMenuItem
                       onClick={() => onEdit(a)}
                       className="flex cursor-pointer items-center gap-3 rounded-md px-3.5 py-2.5 text-sm font-normal text-black hover:bg-muted"
@@ -104,6 +112,15 @@ export function ApplicantTable({
                       <Pencil className="h-4 w-4 text-muted-foreground" />
                       <span>Edit Applicant</span>
                     </DropdownMenuItem>
+                    {onEmail && (
+                      <DropdownMenuItem
+                        onClick={() => onEmail(a)}
+                        className="flex cursor-pointer items-center gap-3 rounded-md px-3.5 py-2.5 text-sm font-normal text-indigo-700 hover:bg-indigo-50"
+                      >
+                        <Mail className="h-4 w-4 text-indigo-600" />
+                        <span>Send Email Update</span>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem
                       onClick={() => onDelete(a)}
                       className="flex cursor-pointer items-center gap-3 rounded-md px-3.5 py-2.5 text-sm font-normal text-red-600 hover:bg-red-50"

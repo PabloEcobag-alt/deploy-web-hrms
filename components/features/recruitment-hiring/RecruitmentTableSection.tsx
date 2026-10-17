@@ -40,6 +40,7 @@ interface RecruitmentTableSectionProps {
   onStageChange: (id: string, stage: HiringStage) => void;
   onDelete: (a: Applicant) => void;
   onSchedule: (a: Applicant) => void;
+  onEmail?: (a: Applicant) => void;
   // pagination
   totalItems: number;
   pageSize: number;
@@ -80,6 +81,7 @@ export function RecruitmentTableSection({
   onStageChange,
   onDelete,
   onSchedule,
+  onEmail,
   totalItems,
   pageSize,
   startIndex,
@@ -197,6 +199,7 @@ export function RecruitmentTableSection({
             onStageChange={onStageChange}
             onDelete={onDelete}
             onSchedule={onSchedule}
+            onEmail={onEmail}
           />
         )}
         {userRole === "vp" && <VPReadOnlyTable applicants={paginatedApplicants} c={c} />}

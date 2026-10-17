@@ -27,6 +27,7 @@ export function useRecruitment() {
   const [selectedApplicant, setSelectedApplicant] = useState<Applicant | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Applicant | null>(null);
   const [pendingSave, setPendingSave] = useState<{ form: ApplicantFormData; mode: "add" | "edit" } | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [scheduleModalFor, setScheduleModalFor] = useState<string | null>(null);
@@ -64,7 +65,7 @@ export function useRecruitment() {
       unseen.forEach(a => notifiedApplicantIds.current.add(a.id));
       isInitialLoadRef.current = false;
       toToast.forEach(a => {
-        toast.custom((t) => renderNewApplicantToast(a, t), { id: `new-applicant-${a.id}`, duration: 7000 });
+        toast.custom((t) => renderNewApplicantToast(a, t as any), { id: `new-applicant-${a.id}`, duration: 7000 });
       });
     };
 
@@ -127,7 +128,7 @@ export function useRecruitment() {
   const hiredCount = applicants.filter(a => a.stage === "Hired").length;
   const forInterviewCount = applicants.filter(a => a.stage === "Initial Interview" || a.stage === "Final Interview").length;
   const probationaryStageCount = applicants.filter(a => a.stage === "Probationary").length;
-  const reqWalkingCount = applicants.filter(a => a.stage === "Requirement Walking").length;
+  const reqWalkingCount = applicants.filter(a => (a.stage as string) === "Requirement Walking").length;
   const upcomingInterviews = useMemo(() => {
     const today = new Date();
     return [...applicants]
@@ -177,68 +178,88 @@ export function useRecruitment() {
 
   // Handlers
   async function doSave(form: ApplicantFormData, mode: "add" | "edit") {
-    if (mode === "add") {
-      try {
-        const applicantDto = buildApplicantDto(form);
-        await createApplicant(applicantDto);
-        const updatedApplicants = await getAllApplicants();
-        setApplicants(mapApplicants(updatedApplicants));
-        toast.success("Applicant added successfully");
-      } catch (error) {
-        console.error("Failed to create applicant:", error);
-        toast.error("Failed to add applicant");
-        return;
-      }
-    } else if (mode === "edit" && selectedApplicant) {
-      const isTransformationStage = (form.stage === "Hired" || form.stage === "Probationary") &&
-        selectedApplicant.stage !== form.stage;
-      try {
-        const applicantId = parseInt(selectedApplicant.id);
-        if (isTransformationStage) {
-          try {
-            const payload = {
-              applicantId: applicantId,
-              hiringStage: form.stage,
-              startDate: form.startDate ? new Date(form.startDate).toISOString() : new Date().toISOString(),
-              probationaryEndDate: form.probationaryEndDate ? new Date(form.probationaryEndDate).toISOString() : undefined,
-            };
-            const response = await hireApplicant(payload);
-            toast.success(`Applicant transformed to employee successfully! Employee ID: ${response.employeeId || response.id || 'Generated'}`);
-            setApplicants(prev => prev.map(a => a.id === selectedApplicant.id ? { ...a, stage: form.stage as HiringStage } : a));
-          } catch (error: any) {
-            console.error("Failed to transform applicant to employee:", error);
-            handleTransformError(error);
-          }
-        } else {
-          await updateApplicant(applicantId, {
-              First_Name: form.firstName || null,
-              Middle_Name: form.middleName || null,
-              Last_Name: form.lastName || null,
-              Interview_Date: form.interviewDate || null,
-              Hiring_Stage: form.stage || null,
-              Position: form.position || null,
-              Email: form.email || null,
-              Mobile: form.phone || null,
-              Requirements: { ...form.requirements, ...form.govIds }
-          });
-          setApplicants(prev => prev.map(a => a.id === selectedApplicant.id ? {
-            ...a,
-            firstName: form.firstName, middleName: form.middleName, lastName: form.lastName,
-            position: form.position, source: form.source, stage: form.stage as HiringStage,
-            email: form.email, phone: form.phone,
-            appliedDate: form.appliedDate, interviewDate: form.interviewDate,
-            govIds: form.govIds, requirements: form.requirements, employmentDocs: form.employmentDocs, resumeFileName: form.resumeFileName,
-          } : a));
-          toast.success("Applicant updated successfully");
+    setIsSubmitting(true);
+    try {
+      if (mode === "add") {
+        try {
+          const applicantDto = buildApplicantDto(form);
+          await createApplicant(applicantDto);
+          const updatedApplicants = await getAllApplicants();
+          setApplicants(mapApplicants(updatedApplicants));
+          toast.success("Applicant added successfully");
+        } catch (error) {
+          console.error("Failed to create applicant:", error);
+          toast.error("Failed to add applicant");
+          return;
         }
-      } catch (error: any) {
-        console.error("Failed to update applicant:", error);
-        toast.error("Failed to update applicant. Please try again.");
-        return;
+      } else if (mode === "edit" && selectedApplicant) {
+        const isTransformationStage = (form.stage === "Hired" || form.stage === "Probationary") &&
+          selectedApplicant.stage !== form.stage;
+        try {
+          const applicantId = parseInt(selectedApplicant.id);
+          if (isTransformationStage) {
+            try {
+              const payload = {
+                applicantId: applicantId,
+                hiringStage: form.stage,
+                startDate: form.startDate ? new Date(form.startDate).toISOString() : new Date().toISOString(),
+                probationaryEndDate: form.probationaryEndDate ? new Date(form.probationaryEndDate).toISOString() : undefined,
+                approvedSalary: form.approvedSalary,
+              };
+              const response = await hireApplicant(payload);
+              toast.success(`Applicant transformed to employee successfully! Employee ID: ${response.employeeId || response.id || 'Generated'}`);
+              setApplicants(prev => prev.map(a => a.id === selectedApplicant.id ? { 
+                ...a, 
+                stage: form.stage as HiringStage,
+                approvedSalary: form.approvedSalary,
+                targetSalary: form.targetSalary
+              } : a));
+            } catch (error: any) {
+              console.error("Failed to transform applicant to employee:", error);
+              handleTransformError(error);
+              return;
+            }
+          } else {
+            await updateApplicant(applicantId, {
+                First_Name: form.firstName || null,
+                Middle_Name: form.middleName || null,
+                Last_Name: form.lastName || null,
+                Interview_Date: form.interviewDate || null,
+                Hiring_Stage: form.stage || null,
+                Position: form.position || null,
+                Email: form.email || null,
+                Mobile: form.phone || null,
+                Expected_Salary: form.expectedSalary ?? null,
+                Approved_Salary: form.approvedSalary ?? null,
+                Interviewer: form.interviewer ?? null,
+                Requirements: { ...form.requirements, ...form.govIds }
+            });
+            setApplicants(prev => prev.map(a => a.id === selectedApplicant.id ? {
+              ...a,
+              firstName: form.firstName, middleName: form.middleName, lastName: form.lastName,
+              position: form.position, source: form.source, stage: form.stage as HiringStage,
+              email: form.email, phone: form.phone,
+              appliedDate: form.appliedDate, interviewDate: form.interviewDate,
+              govIds: form.govIds, requirements: form.requirements, employmentDocs: form.employmentDocs, resumeFileName: form.resumeFileName,
+              expectedSalary: form.expectedSalary,
+              approvedSalary: form.approvedSalary,
+              targetSalary: form.targetSalary,
+              interviewer: form.interviewer,
+            } : a));
+            toast.success("Applicant updated successfully");
+          }
+        } catch (error: any) {
+          console.error("Failed to update applicant:", error);
+          toast.error("Failed to update applicant. Please try again.");
+          return;
+        }
       }
+      setModal(null);
+      setSelectedApplicant(null);
+    } finally {
+      setIsSubmitting(false);
+      setPendingSave(null);
     }
-    setModal(null);
-    setSelectedApplicant(null);
   }
 
   function handleTransformError(error: any) {
@@ -302,6 +323,6 @@ export function useRecruitment() {
     probationaryStageCount, reqWalkingCount, upcomingInterviews,
     filtered, tabFiltered, vpApplicants, paginatedApplicants,
     pageSize, setPageSize, currentPage, setCurrentPage, totalItems, totalPages, safePage, startIndex,
-    doSave, handleStageChange, saveInterviewSchedule, handleDeleteConfirm,
+    isSubmitting, doSave, handleStageChange, saveInterviewSchedule, handleDeleteConfirm,
   };
 }

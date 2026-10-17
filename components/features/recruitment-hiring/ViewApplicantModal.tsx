@@ -7,10 +7,11 @@ import {
   HIRING_REQUIREMENTS,
   EMPLOYMENT_DOCUMENTS,
   HEALTH_CHECKLIST,
+  DEFAULT_ROLE_SALARIES,
 } from "./constants";
 import { useColors, getFullName, formatDate, getDaysUntil, countCompleted } from "./utils";
 import { StatusBadge, StageBadge } from "./badges";
-import { Check, X, Calendar, Trash2, Pencil, MoreVertical } from "lucide-react";
+import { Check, X, Calendar, Trash2, Pencil, MoreVertical, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -48,10 +49,11 @@ function ChecklistRow({ label, checked }: { label: string; checked: boolean }) {
   );
 }
 
-export function ViewApplicantModal({ applicant, onClose, onEdit, onSchedule, onDelete, c, isDark }: {
+export function ViewApplicantModal({ applicant, onClose, onEdit, onSchedule, onDelete, onEmail, c, isDark }: {
   applicant: Applicant; onClose: () => void; onEdit: () => void;
   onSchedule?: (a: Applicant) => void;
   onDelete?: (a: Applicant) => void;
+  onEmail?: (a: Applicant) => void;
   c: ReturnType<typeof useColors>; isDark: boolean;
 }) {
   const [tab, setTab] = useState<ModalTab>("info");
@@ -74,8 +76,14 @@ export function ViewApplicantModal({ applicant, onClose, onEdit, onSchedule, onD
     return `${formatDate(date)} (${suffix})`;
   };
 
+  const targetSalaryVal = applicant.targetSalary || DEFAULT_ROLE_SALARIES[applicant.position];
+  const approvedSalaryVal = applicant.approvedSalary ?? targetSalaryVal;
+
   const infoRows: [string, string][] = [
     ["Position", applicant.position],
+    ["Target Salary", targetSalaryVal ? `₱${targetSalaryVal.toLocaleString()}` : "-"],
+    ["Approved / Offered", approvedSalaryVal ? `₱${approvedSalaryVal.toLocaleString()}` : "-"],
+    ["Interviewer / Evaluator", applicant.interviewer || "-"],
     ["Email", applicant.email],
     ["Phone", applicant.phone],
     ["Source", applicant.source],
@@ -121,6 +129,15 @@ export function ViewApplicantModal({ applicant, onClose, onEdit, onSchedule, onD
                     <Pencil className="h-4 w-4 text-muted-foreground" />
                     <span>Edit Applicant</span>
                   </DropdownMenuItem>
+                  {onEmail && (
+                    <DropdownMenuItem
+                      onClick={() => onEmail(applicant)}
+                      className="flex cursor-pointer items-center gap-3 rounded-md px-3.5 py-2.5 text-sm font-normal text-indigo-700 hover:bg-indigo-50"
+                    >
+                      <Mail className="h-4 w-4 text-indigo-600" />
+                      <span>Send Email Update</span>
+                    </DropdownMenuItem>
+                  )}
                   {onDelete && (
                     <DropdownMenuItem
                       onClick={() => onDelete(applicant)}

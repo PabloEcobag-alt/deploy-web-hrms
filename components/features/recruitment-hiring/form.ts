@@ -3,6 +3,7 @@
 import type { Applicant, ApplicantFormData } from "./types";
 import {
   POSITIONS,
+  DEFAULT_ROLE_SALARIES,
   EMPLOYMENT_DOCUMENTS,
   HEALTH_CHECKLIST,
   initGovIds,
@@ -10,11 +11,13 @@ import {
 } from "./constants";
 
 export function emptyForm(): ApplicantFormData {
+  const defaultPos = POSITIONS[0];
+  const target = DEFAULT_ROLE_SALARIES[defaultPos] || 15000;
   return {
     firstName: "",
     middleName: "",
     lastName: "",
-    position: POSITIONS[0],
+    position: defaultPos,
     source: "Walk-In",
     stage: "Initial Interview",
     email: "",
@@ -28,10 +31,15 @@ export function emptyForm(): ApplicantFormData {
     resumeFileName: "",
     startDate: "",
     probationaryEndDate: "",
+    targetSalary: target,
+    expectedSalary: target,
+    approvedSalary: target,
+    interviewer: "",
   };
 }
 
 export function applicantToForm(a: Applicant): ApplicantFormData {
+  const target = a.targetSalary || DEFAULT_ROLE_SALARIES[a.position] || 15000;
   return {
     firstName: a.firstName,
     middleName: a.middleName ?? "",
@@ -54,7 +62,11 @@ export function applicantToForm(a: Applicant): ApplicantFormData {
         Object.fromEntries(HEALTH_CHECKLIST.map((h) => [h.key, false]))),
     },
     resumeFileName: a.resumeFileName ?? "",
-    startDate: a.startDate ?? "",
-    probationaryEndDate: a.probationaryEndDate ?? "",
+    startDate: (a as any).startDate ?? (a as any).expectedStart ?? "",
+    probationaryEndDate: (a as any).probationaryEndDate ?? "",
+    targetSalary: target,
+    expectedSalary: a.expectedSalary ?? a.approvedSalary ?? target,
+    approvedSalary: a.approvedSalary ?? target,
+    interviewer: a.interviewer ?? "",
   };
 }

@@ -19,6 +19,23 @@ export const POSITIONS = [
   "Intern/Summer Job",
 ];
 
+export const DEFAULT_ROLE_SALARIES: Record<string, number> = {
+  "On Call": 15000,
+  "Merchandiser Oncall": 12500,
+  "Merchandiser On Call": 12500,
+  "Store Attendant": 14000,
+  "Commissary Helper": 13000,
+  "Head Cook": 22000,
+  "Assistant Cook": 16000,
+  "Inventory Manager": 28000,
+  "Supply Chain & Marketing Manager": 38000,
+  "Logistics and Order Manager": 32000,
+  "OJT": 8000,
+  "Intern/Summer Job": 10000,
+  "Admin": 35000,
+  "Manager": 40000,
+};
+
 export const APPLICANT_SOURCES: ApplicantSource[] = [
   "Summer Job",
   "Walk-In",
@@ -93,3 +110,19 @@ export function initEmploymentDocs(): EmploymentDocs {
 export function initHealthDocs(): HealthDocs {
   return Object.fromEntries(HEALTH_CHECKLIST.map((h) => [h.key, false]));
 }
+
+export interface InterviewerOption {
+  id: string;
+  name: string;
+  role: "Admin" | "Supervisor" | "Manager";
+  email: string;
+}
+
+export const DEFAULT_INTERVIEWERS: InterviewerOption[] = [
+  { id: "admin-1", name: "Alice SuperAdmin", role: "Admin", email: "alice.admin@r3b2p.com" },
+  { id: "admin-2", name: "Admin User", role: "Admin", email: "admin@r3b2p.com" },
+  { id: "sup-1", name: "John Smith", role: "Supervisor", email: "john.smith@company.com" },
+  { id: "sup-2", name: "Maria Garcia", role: "Supervisor", email: "maria.garcia@company.com" },
+  { id: "sup-3", name: "Robert Taylor", role: "Supervisor", email: "robert.taylor@company.com" },
+  { id: "sup-4", name: "Sarah Jenkins", role: "Supervisor", email: "sarah.jenkins@company.com" },
+];

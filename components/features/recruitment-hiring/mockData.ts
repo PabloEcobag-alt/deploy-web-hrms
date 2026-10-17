@@ -21,6 +21,10 @@ export const MOCK_APPLICANTS: Applicant[] = [
     interviewDate: "2026-08-29",
     expectedStart: "2026-09-01",
     aiMatchScore: 92,
+    targetSalary: 12500,
+    expectedSalary: 12500,
+    approvedSalary: 12500,
+    interviewer: "Alice SuperAdmin",
   },
   {
     id: "102",
@@ -40,6 +44,10 @@ export const MOCK_APPLICANTS: Applicant[] = [
     interviewDate: "2026-08-30",
     expectedStart: "2026-09-05",
     aiMatchScore: 88,
+    targetSalary: 14000,
+    expectedSalary: 14000,
+    approvedSalary: 14000,
+    interviewer: "John Smith",
   },
   {
     id: "103",
@@ -59,6 +67,10 @@ export const MOCK_APPLICANTS: Applicant[] = [
     interviewDate: "2026-08-28",
     expectedStart: "2026-09-02",
     aiMatchScore: 95,
+    targetSalary: 13000,
+    expectedSalary: 13000,
+    approvedSalary: 13000,
+    interviewer: "Maria Garcia",
   },
   {
     id: "104",
@@ -78,6 +90,10 @@ export const MOCK_APPLICANTS: Applicant[] = [
     interviewDate: "2026-09-01",
     expectedStart: "2026-09-10",
     aiMatchScore: 81,
+    targetSalary: 10000,
+    expectedSalary: 10000,
+    approvedSalary: 10000,
+    interviewer: "Sarah Jenkins",
   },
   {
     id: "105",
@@ -97,5 +113,8 @@ export const MOCK_APPLICANTS: Applicant[] = [
     interviewDate: "2026-08-22",
     expectedStart: "2026-09-01",
     aiMatchScore: 90,
+    targetSalary: 15000,
+    expectedSalary: 15000,
+    approvedSalary: 16000,
   },
 ];

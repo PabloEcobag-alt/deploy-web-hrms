@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { StatCard } from "@/components/StatCard";
 import { Users, GraduationCap, UserCheck, Clock } from "lucide-react";
@@ -9,20 +10,23 @@ import {
   useColors,
   getFullName,
 } from "@/components/features/recruitment-hiring/utils";
+import type { Applicant } from "@/components/features/recruitment-hiring/types";
 import { useRecruitment } from "@/components/features/recruitment-hiring/useRecruitment";
 import { ApplicantModal } from "@/components/features/recruitment-hiring/ApplicantModal";
 import { ViewApplicantModal } from "@/components/features/recruitment-hiring/ViewApplicantModal";
 import { ConfirmDialog } from "@/components/features/recruitment-hiring/ConfirmDialog";
 import { RecruitmentTableSection } from "@/components/features/recruitment-hiring/RecruitmentTableSection";
 import { ScheduleInterviewModal } from "@/components/features/recruitment-hiring/ScheduleInterviewModal";
+import { ApplicantEmailModal } from "@/components/features/recruitment-hiring/ApplicantEmailModal";
 
 export default function ViewRecruitmentHiring() {
   const isDark = useDarkMode();
   const c = useColors(isDark);
   const { user } = useAuth();
-  const isAdmin = user?.roles?.includes("Admin");
+  const isAdmin = (user as any)?.roles?.includes("Admin") || user?.role === "Admin" || (user as any)?.role === "SystemAdmin";
 
   const vm = useRecruitment();
+  const [emailApplicant, setEmailApplicant] = useState<Applicant | null>(null);
 
   const cardStyle = {
     background: c.cardBg,
@@ -113,6 +117,7 @@ export default function ViewRecruitmentHiring() {
           onStageChange={vm.handleStageChange}
           onDelete={a => vm.setDeleteTarget(a)}
           onSchedule={a => vm.setScheduleModalFor(a.id)}
+          onEmail={a => setEmailApplicant(a)}
           totalItems={vm.totalItems}
           pageSize={vm.pageSize}
           startIndex={vm.startIndex}
@@ -185,6 +190,7 @@ export default function ViewRecruitmentHiring() {
           onEdit={() => vm.setModal("edit")}
           onSchedule={(a) => { vm.setModal(null); vm.setScheduleModalFor(a.id); }}
           onDelete={(a) => { vm.setModal(null); vm.setSelectedApplicant(null); vm.setDeleteTarget(a); }}
+          onEmail={(a) => setEmailApplicant(a)}
           c={c} isDark={isDark}
         />
       )}
@@ -202,6 +208,15 @@ export default function ViewRecruitmentHiring() {
           />
         );
       })()}
+
+      {/* Human-in-the-Loop Email Notification Modal */}
+      {emailApplicant && (
+        <ApplicantEmailModal
+          applicant={emailApplicant}
+          isOpen={!!emailApplicant}
+          onClose={() => setEmailApplicant(null)}
+        />
+      )}
     </div>
   );
 }

@@ -49,8 +49,12 @@ export function mapApplicants(data: any): Applicant[] {
       interviewDate: a.interview_Date || "",
       expectedStart: a.expected_Start_Date || a.expectedStartDate || "",
       aiMatchScore: a.ai_Match_Score ?? a.aiMatchScore ?? undefined,
+      expectedSalary: a.expected_Salary ?? a.expectedSalary ?? undefined,
+      approvedSalary: a.approved_Salary ?? a.approvedSalary ?? undefined,
+      targetSalary: a.target_Salary ?? a.targetSalary ?? undefined,
+      interviewer: a.interviewer ?? a.Interviewer ?? undefined,
     }))
-    .sort((x, y) => Number(y.id) - Number(x.id));
+    .sort((x: Applicant, y: Applicant) => Number(y.id) - Number(x.id));
 }
 
 /**
@@ -70,5 +74,8 @@ export function buildApplicantDto(form: ApplicantFormData) {
     resume_URL: form.resumeFileName || "",
     contact_Details: form.middleName || "",
     status: "Training",
+    expectedSalary: form.expectedSalary,
+    approvedSalary: form.approvedSalary,
+    interviewer: form.interviewer || undefined,
   };
 }

@@ -40,6 +40,10 @@ export interface Applicant {
   healthDocs?: HealthDocs;
   resumeFileName?: string;
   aiMatchScore?: number;
+  expectedSalary?: number;
+  approvedSalary?: number;
+  targetSalary?: number;
+  interviewer?: string;
 }
 
 export interface ApplicantFormData {
@@ -60,4 +64,8 @@ export interface ApplicantFormData {
   resumeFileName: string;
   startDate?: string;
   probationaryEndDate?: string;
+  expectedSalary?: number;
+  approvedSalary?: number;
+  targetSalary?: number;
+  interviewer?: string;
 }
